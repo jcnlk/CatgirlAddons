@@ -108,7 +108,7 @@ object DungeonESP: Module(
 
     private fun handleStands(entity: Entity) {
         val entityName = entity.customNameTag?.let { StringUtils.stripControlCodes(it) } ?: return
-        if (entity.name.startsWith("§6✯ ") && entity.name.endsWith("§c❤")) {
+        if (entity.name.matches(Regex("^(?:.* )?§6✯ .+ .*§c❤$"))) {
             val correspondingEntity = getMobEntity(entity) ?: return
             currentEntities.add(ESPEntity(correspondingEntity, colorStar, colorStarFill))
         }
