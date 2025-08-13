@@ -34,7 +34,14 @@ object CustomMainMenu: Screen(false) { // todo add more shit
             button(10, 10, "Singleplayer") { mc.displayGuiScreen(GuiSelectWorld(mc.currentScreen)) },
             button(10, 35, "Multiplayer") { mc.displayGuiScreen(GuiMultiplayer(mc.currentScreen)) },
             button(10, 60, "Options") { mc.displayGuiScreen(GuiOptions(mc.currentScreen, mc.gameSettings)) },
-            button(10, 85, "Hypixel") { FMLClientHandler.instance().connectToServer(this, ServerData("Hypixel", "mc.hypixel.net:25565", false)) },
+            button(10, 85, "Hypixel") { 
+                try {
+                    FMLClientHandler.instance().connectToServer(this, ServerData("Hypixel", "mc.hypixel.net:25565", false))
+                } catch (e: Exception) {
+                    println("Error connecting to Hypixel: ${e.message}")
+                    e.printStackTrace()
+                }
+            },
             button(10, this@CustomMainMenu.height - 30, "Quit") { mc.shutdown() },
             button(this@CustomMainMenu.width - 210, this@CustomMainMenu.height - 30, "Open Github") { Desktop.getDesktop().browse(URI("https://github.com/WompWatr/CatgirlAddons")) },
             button(this@CustomMainMenu.width - 210, this@CustomMainMenu.height - 55, "Discord Server") { Desktop.getDesktop().browse(URI("https://discord.gg/jK4AXeVK8u")) },
@@ -42,7 +49,15 @@ object CustomMainMenu: Screen(false) { // todo add more shit
         )
         if (PhoenixAuth.addToMainMenu) {
             (buttons as MutableList).add(4, button(10, 110, "Phoenix") {
-                FMLClientHandler.instance().connectToServer(this, ServerData("Phoenix", "${PhoenixAuth.phoenixProxy}:25565", false))
+                try {
+                    // Fix: Use .text to get the actual string value from the StringSetting
+                    val proxyAddress = "${PhoenixAuth.phoenixProxy.text}"
+                    FMLClientHandler.instance().connectToServer(this, ServerData("Phoenix", proxyAddress, false))
+                } catch (e: Exception) {
+                    println("Error connecting to Phoenix: ${e.message}")
+                    println("Phoenix proxy value: '${PhoenixAuth.phoenixProxy.text}'")
+                    e.printStackTrace()
+                }
             })
         }
     }
@@ -76,6 +91,7 @@ object CustomMainMenu: Screen(false) { // todo add more shit
             callback(null)
         }
     }
+    
     private fun button(x: Int, y: Int, title: String, action: () -> Unit) = button {
         at(x, y)
         size(200, 20)
