@@ -36,6 +36,7 @@ object CustomMainMenu: Screen(false) { // todo add more shit
             button(10, 60, "Options") { mc.displayGuiScreen(GuiOptions(mc.currentScreen, mc.gameSettings)) },
             button(10, 85, "Hypixel") { 
                 try {
+                    FMLClientHandler.instance().setupServerList()
                     FMLClientHandler.instance().connectToServer(this, ServerData("Hypixel", "mc.hypixel.net:25565", false))
                 } catch (e: Exception) {
                     println("Error connecting to Hypixel: ${e.message}")
@@ -50,6 +51,7 @@ object CustomMainMenu: Screen(false) { // todo add more shit
         if (PhoenixAuth.addToMainMenu) {
             (buttons as MutableList).add(4, button(10, 110, "Phoenix") {
                 try {
+                    FMLClientHandler.instance().setupServerList()
                     FMLClientHandler.instance().connectToServer(this, ServerData("Phoenix", PhoenixAuth.phoenixProxy, false))
                 } catch (e: Exception) {
                     println("Error connecting to Phoenix: ${e.message}")
