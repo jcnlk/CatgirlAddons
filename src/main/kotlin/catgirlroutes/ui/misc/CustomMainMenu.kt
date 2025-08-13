@@ -50,12 +50,10 @@ object CustomMainMenu: Screen(false) { // todo add more shit
         if (PhoenixAuth.addToMainMenu) {
             (buttons as MutableList).add(4, button(10, 110, "Phoenix") {
                 try {
-                    // Fix: Use .text to get the actual string value from the StringSetting
-                    val proxyAddress = "${PhoenixAuth.phoenixProxy.text}"
-                    FMLClientHandler.instance().connectToServer(this, ServerData("Phoenix", proxyAddress, false))
+                    FMLClientHandler.instance().connectToServer(this, ServerData("Phoenix", PhoenixAuth.phoenixProxy, false))
                 } catch (e: Exception) {
                     println("Error connecting to Phoenix: ${e.message}")
-                    println("Phoenix proxy value: '${PhoenixAuth.phoenixProxy.text}'")
+                    println("Phoenix proxy value: '${PhoenixAuth.phoenixProxy}'")
                     e.printStackTrace()
                 }
             })
