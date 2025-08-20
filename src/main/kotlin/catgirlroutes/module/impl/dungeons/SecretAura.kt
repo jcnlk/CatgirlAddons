@@ -8,6 +8,7 @@ import catgirlroutes.module.settings.Setting.Companion.withDependency
 import catgirlroutes.module.settings.impl.BooleanSetting
 import catgirlroutes.module.settings.impl.NumberSetting
 import catgirlroutes.module.settings.impl.SelectorSetting
+import catgirlroutes.module.settings.impl.ActionSetting
 import catgirlroutes.utils.BlockUtils.collisionRayTrace
 import catgirlroutes.utils.ChatUtils.modMessage
 import catgirlroutes.utils.PacketUtils
