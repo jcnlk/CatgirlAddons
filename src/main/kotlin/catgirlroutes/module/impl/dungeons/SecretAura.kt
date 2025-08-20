@@ -56,6 +56,11 @@ object SecretAura : Module( // TODO: RECODE
     private val auraClose by BooleanSetting("Auto close", "Makes secret aura auto close chests.")
     private val onlyDungeons by BooleanSetting("Only in dungeons", true, "Makes secret aura only work in dungeons.")
 
+    private val clearButton by ActionSetting("Clear blocks", "Manually clears all tracked blocks and cooldowns.") { 
+        clearBlocks()
+        modMessage("Secret Aura: Blocks cleared manually!")
+    }
+
     private val blocksDone: MutableList<BlockPos> = LinkedList()
     private val blocksCooldown: MutableMap<BlockPos, Long> = HashMap()
     private var redstoneKey = false
