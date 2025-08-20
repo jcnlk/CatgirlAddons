@@ -17,9 +17,11 @@ import catgirlroutes.utils.dungeon.DungeonUtils.currentRoom
 import catgirlroutes.utils.dungeon.DungeonUtils.currentRoomName
 import catgirlroutes.utils.dungeon.DungeonUtils.getRealCoords
 import catgirlroutes.utils.dungeon.DungeonUtils.getRelativeCoords
+import catgirlroutes.utils.dungeon.DungeonUtils.inBoss
 import catgirlroutes.utils.dungeon.PuzzleStatus
 import catgirlroutes.utils.equalsOneOf
 import catgirlroutes.utils.isAir
+import catgirlroutes.utils.noControlCodes
 import net.minecraft.block.BlockLever
 import net.minecraft.block.BlockLever.EnumOrientation
 import net.minecraft.block.BlockSkull
@@ -54,10 +56,12 @@ object SecretAura : Module( // TODO: RECODE
     private val swapSlot by NumberSetting("Swap item slot", 1.0, 1.0, 9.0, 1.0, "Slot for secret aura to swap to.").withDependency { swapOn.index >= 1 }
 
     private val swing by BooleanSetting("Swing hand", "Makes secret aura swing hand on click.")
+    private val onlyUnpoweredLevers by BooleanSetting("Only unpowered levers", true, "Only clicks levers that are not powered.")
     private val auraClose by BooleanSetting("Auto close", "Makes secret aura auto close chests.")
-    private val onlyDungeons by BooleanSetting("Only in dungeons", true, "Makes secret aura only work in dungeons.")
+    private val onlyDungeons by BooleanSetting("Only in dungeons", false, "Makes secret aura only work in dungeons.")
+    private val disableInBoss by BooleanSetting("Disable in boss", false, "Disables Secret Aura completely when in boss room.")
 
-    private val clearButton by ActionSetting("Clear blocks", "Manually clears all tracked blocks and cooldowns.") { 
+    private val clearButton by ActionSetting("Clear blocks", "Manually clears all tracked blocks and cooldowns.") {
         clearBlocks()
         modMessage("Secret Aura: Blocks cleared manually!")
     }
@@ -72,6 +76,8 @@ object SecretAura : Module( // TODO: RECODE
         if (event.phase != TickEvent.Phase.START) return
         if (!DungeonUtils.inDungeons && onlyDungeons) return
         if (mc.thePlayer == null || mc.theWorld == null) return
+        if (inBoss && disableInBoss) return
+
         val eyePos = mc.thePlayer.getPositionEyes(0f)
         val blockPos1 = BlockPos(eyePos.xCoord - auraRange, eyePos.yCoord - auraRange, eyePos.zCoord - auraRange)
         val blockPos2 = BlockPos(eyePos.xCoord + auraRange, eyePos.yCoord + auraRange, eyePos.zCoord + auraRange)
@@ -126,6 +132,9 @@ object SecretAura : Module( // TODO: RECODE
             } else if (blockState.block === Blocks.lever) {
                 if (currentRoomName == "Water Board") continue
                 if (currentRoomName == "Tic Tac Toe") continue
+
+                val isPowered = blockState.getValue(BlockLever.POWERED) as Boolean
+                if (onlyUnpoweredLevers && isPowered) continue
 
                 val orientation = blockState.properties[BlockLever.FACING] as EnumOrientation
                 val aabb = when(orientation) {
@@ -354,24 +363,16 @@ object SecretAura : Module( // TODO: RECODE
                 modMessage("Blocks cleared!")
             }
         }
-    }
 
-    private var closeId: Int? = null
-    @SubscribeEvent
-    fun onTick2(event: ClientTickEvent) {
-        if (event.phase != TickEvent.Phase.END || closeId == null) return
-        mc.netHandler.networkManager.sendPacket(C0DPacketCloseWindow(closeId!!))
-        closeId = null
-    }
+        else if (event.packet is S2DPacketOpenWindow) {
+            val packet = event.packet
+            if (!auraClose) return
+            if (!DungeonUtils.inDungeons && onlyDungeons) return
 
-    @SubscribeEvent
-    fun onPacketReceive2(event: PacketReceiveEvent) {
-        if (!auraClose || event.packet !is S2DPacketOpenWindow) return
-        if (!DungeonUtils.inDungeons && onlyDungeons) return
-        val packet = event.packet
-        if (packet.guiId != "minecraft:chest") return
-        if ((packet.windowTitle.formattedText == "Chest§r" && packet.slotCount == 27) || (packet.windowTitle.formattedText == "Large Chest§r" && packet.slotCount == 54)) {
-            closeId = packet.windowId
+            val windowTitle = packet.windowTitle.unformattedText.noControlCodes
+            if (!windowTitle.equalsOneOf("Chest", "Large Chest")) return
+
+            mc.netHandler.networkManager.sendPacket(C0DPacketCloseWindow(packet.windowId))
             event.isCanceled = true
         }
     }
