@@ -98,8 +98,8 @@ object AutoSS : Module(
 
             val delays = delayStrings.map { delayStr ->
                 val delay = delayStr.trim().toLong()
-                if (delay < 0 || delay > 5000) {
-                    throw IllegalArgumentException("Delay must be between 0 and 5000ms")
+                if (delay !in 0..1000) {
+                    throw IllegalArgumentException("Delay must be between 0 and 1000ms")
                 }
                 delay
             }
@@ -131,17 +131,15 @@ object AutoSS : Module(
                 try {
                     reset()
                     clickButton(startButton.x, startButton.y, startButton.z)
-                    val firstDelay = delays[0] + if (randomnessAmount > 0) Random.nextLong(randomnessAmount.toLong() + 1) else 0
+                    val firstDelay = (delays[1] - delays[0]).coerceAtLeast(0L) + (if (randomnessAmount > 0) Random.nextLong(randomnessAmount.toLong() + 1) else 0)
                     if (firstDelay > 0) Thread.sleep(firstDelay)
 
                     reset()
                     clickButton(startButton.x, startButton.y, startButton.z)
-                    val secondDelay = delays[1] + if (randomnessAmount > 0) Random.nextLong(randomnessAmount.toLong() + 1) else 0
+                    val secondDelay = (delays[2] - delays[1]).coerceAtLeast(0L) + (if (randomnessAmount > 0) Random.nextLong(randomnessAmount.toLong() + 1) else 0)
                     if (secondDelay > 0) Thread.sleep(secondDelay)
 
                     doingSS = true
-                    val thirdDelay = delays[2] + if (randomnessAmount > 0) Random.nextLong(randomnessAmount.toLong() + 1) else 0
-                    if (thirdDelay > 0) Thread.sleep(thirdDelay)
                     clickButton(startButton.x, startButton.y, startButton.z)
                 } catch (e: Exception) {
                     modMessage("§cError in autostart: ${e.message}")
