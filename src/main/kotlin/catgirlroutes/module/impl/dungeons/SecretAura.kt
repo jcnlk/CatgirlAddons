@@ -41,6 +41,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent
 import java.util.*
+import kotlin.math.*
 
 //Ty soshimishimi for inspiration https://github.com/soshimee/secretguide
 object SecretAura : Module( // TODO: RECODE
@@ -50,6 +51,8 @@ object SecretAura : Module( // TODO: RECODE
 ){
     private val auraRange by NumberSetting("Range", 6.2, 2.1, 6.5, 0.1, "Maximum range for secret aura.")
     private val auraSkullRange by NumberSetting("Skull range", 4.7, 2.1, 4.7, 0.1, "Maximum range for secret aura when clicking skulls.")
+
+    private val fovAngle by NumberSetting("FOV Angle", 360.0, 0.0, 360.0, 1.0, "FOV angle in degrees.", unit = "°")
 
     private val swapOn by SelectorSetting("Swap on", "Skulls", arrayListOf("None", "Skulls", "All"), "Makes secret aura swap")
     private val swapBack by BooleanSetting("Swap back", true, "Makes secret aura swap back to previous item after swapping.").withDependency { swapOn.index >= 1 }
@@ -71,6 +74,28 @@ object SecretAura : Module( // TODO: RECODE
     private var redstoneKey = false
     private var prevSlot = -1
 
+    private fun isWithinFov(blockPos: BlockPos): Boolean {
+        val player = mc.thePlayer ?: return false
+        val eyePos = player.getPositionEyes(0f)
+        val blockCenter = Vec3(blockPos.x + 0.5, blockPos.y + 0.5, blockPos.z + 0.5)
+
+        val playerYaw = Math.toRadians(player.rotationYaw.toDouble())
+        val playerPitch = Math.toRadians(player.rotationPitch.toDouble())
+
+        val playerLookVec = Vec3(
+            -sin(playerYaw) * cos(playerPitch),
+            -sin(playerPitch),
+            cos(playerYaw) * cos(playerPitch)
+        ).normalize()
+
+        val toBlock = blockCenter.subtract(eyePos).normalize()
+
+        val dotProduct = playerLookVec.dotProduct(toBlock)
+        val angleDegrees = Math.toDegrees(acos(dotProduct.coerceIn(-1.0, 1.0)))
+
+        return angleDegrees <= fovAngle / 2.0
+    }
+
     @SubscribeEvent
     fun onTick(event: ClientTickEvent) {
         if (event.phase != TickEvent.Phase.START) return
@@ -86,6 +111,7 @@ object SecretAura : Module( // TODO: RECODE
         for (block in blocks) {
             if (blocksDone.contains(block)) continue
             if (blocksCooldown.containsKey(block) && blocksCooldown[block]!! + 500 > time) continue
+            if (!isWithinFov(block)) continue
 
             val blockState = mc.theWorld.getBlockState(block)
             if (blockState.block === Blocks.chest || blockState.block === Blocks.trapped_chest) {
