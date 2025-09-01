@@ -7,6 +7,9 @@ import catgirlroutes.module.Module
 import catgirlroutes.module.settings.impl.KeyBindSetting
 import catgirlroutes.utils.ChatUtils.command
 import catgirlroutes.utils.renderText
+import catgirlroutes.utils.LocationManager
+import catgirlroutes.utils.ChatUtils.modMessage
+import catgirlroutes.events.impl.ServerTickEvent
 import net.minecraft.network.play.client.C0DPacketCloseWindow
 import net.minecraft.network.play.client.C0EPacketClickWindow
 import net.minecraft.network.play.server.S2DPacketOpenWindow
@@ -22,6 +25,10 @@ object AutoWardrobe : Module(
     private val wardrobes = (36..44).map { slot ->
         +KeyBindSetting("Wardrobe ${slot-35}").onPress {
             if (!enabled) return@onPress
+            if (!LocationManager.inSkyblock) {
+                modMessage("§cYou are currently not in Skyblock, cancelling equipping!")
+                return@onPress
+            }
             targetSlot = slot
             openMenu()
         }
@@ -30,10 +37,29 @@ object AutoWardrobe : Module(
     private var active = false
     private var targetSlot = 0
     private var cwid = -1
+    private var ticks = 0
 
     private fun openMenu() {
         active = true
         command("wd", false)
+    }
+
+    @SubscribeEvent
+    fun onServerTick(event: ServerTickEvent) {
+        if (!active || !enabled) return
+        ticks++
+
+        if (ticks > 100) {
+            modMessage("§cTimeout reached, cancelling equipping!")
+            stop()
+        }
+    }
+
+    private fun stop() {
+        active = false
+        targetSlot = 0
+        cwid = -1
+        ticks = 0
     }
 
     @SubscribeEvent
