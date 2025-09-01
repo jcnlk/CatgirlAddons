@@ -201,6 +201,15 @@ object AutoSS : Module(
                         }
                         clickButton(next.x, next.y, next.z)
                         progress++
+
+                        if (progress == clicks.size) {
+                            val first = clicks.firstOrNull()
+                            if (first != null && smoothRotate) {
+                                val (fyaw, fpitch) = getYawAndPitch(first.x.toDouble() + 0.875, first.y.toDouble() + 0.5, first.z.toDouble() + 0.5)
+                                targets.add(Vec3(fyaw.toDouble(), fpitch.toDouble(), time))
+                                debugMessage("Wrapped rotation to first button: $first")
+                            }
+                        }
                     }
                 }
             }
