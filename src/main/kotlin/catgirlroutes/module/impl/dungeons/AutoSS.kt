@@ -10,6 +10,7 @@ import catgirlroutes.module.settings.Visibility
 import catgirlroutes.module.settings.impl.ActionSetting
 import catgirlroutes.module.settings.impl.BooleanSetting
 import catgirlroutes.module.settings.impl.NumberSetting
+import catgirlroutes.module.settings.impl.StringSetting
 import catgirlroutes.utils.ChatUtils.debugMessage
 import catgirlroutes.utils.ChatUtils.modMessage
 import catgirlroutes.utils.LocationManager
@@ -42,13 +43,14 @@ object AutoSS : Module(
     name = "AutoSS",
     Category.DUNGEON
 ){
+    private val autostartDelays by StringSetting("Autostart delays", "0,125,250", 50, "delay1,delay2,delay3", "Delays in ms for the three autostart clicks, separated by commas (e.g. 0,125,250).")
     val delay by NumberSetting("Delay", 200.0, 50.0, 500.0, 10.0, "AutoSS delay.", unit = "ms")
-    private val forceDevice by BooleanSetting("Force device", "Makes the mod think the player is in front of the device.", Visibility.ADVANCED_ONLY)
-    private val resetSS by ActionSetting("Reset SS", "Resets the device") {reset(); doingSS = false; clicked = false}
-    private val autoStart by NumberSetting("Autostart delay", 125.0, 50.0, 200.0, 1.0, "Delay between clicks when skipping a button.", unit = "ms")
+    private val randomnessAmount by NumberSetting("Click randomness", 0.0, 0.0, 100.0, 1.0, "Maximum extra random delay added to each click (0 = disabled).", unit = "ms")
     private val smoothRotate by BooleanSetting("Rotate", "Rotates smoothly.")
     private val time by NumberSetting("Rotation speed", 200.0, 0.0, 500.0, 10.0, unit = "ms").withDependency { this.smoothRotate }
-    private val dontCheck by BooleanSetting("Faster SS?")
+    private val dontCheck by BooleanSetting("Faster SS", "Makes SS a bit faster by not checking if the button is spawned.")
+    private val forceDevice by BooleanSetting("Force device", "Makes the mod think the player is in front of the device.", Visibility.ADVANCED_ONLY)
+    private val resetSS by ActionSetting("Reset SS", "Resets the device") {reset(); doingSS = false; clicked = false}
 
     init {
         ssLoop()
@@ -65,6 +67,7 @@ object AutoSS : Module(
     private var clickedButton: Vec3? = null
     private var allButtons = ArrayList<Vec3>()
     private val startButton = BlockPos(110, 121, 91)
+    private val defaultDelays = listOf(0L, 125L, 250L)
 
     fun reset() {
         allButtons.clear()
@@ -86,6 +89,28 @@ object AutoSS : Module(
         reset()
     }
 
+    private fun parseAutostartDelays(): List<Long> {
+        return try {
+            val delayStrings = autostartDelays.split(",")
+            if (delayStrings.size != 3) {
+                throw IllegalArgumentException("Expected exactly 3 delays separated by commas")
+            }
+
+            val delays = delayStrings.map { delayStr ->
+                val delay = delayStr.trim().toLong()
+                if (delay < 0 || delay > 5000) {
+                    throw IllegalArgumentException("Delay must be between 0 and 5000ms")
+                }
+                delay
+            }
+            delays
+        } catch (e: Exception) {
+            modMessage("§cInvalid autostart delays format! Expected format: '0,125,250'. Using default delays (0,125,250).")
+            debugMessage("Autostart delay parsing error: ${e.message}")
+            defaultDelays
+        }
+    }
+
     fun start() {
         allButtons.clear()
         val (yaw, pitch) = getYawAndPitch(110.875, 121.5, 91.5)
@@ -99,17 +124,27 @@ object AutoSS : Module(
             reset()
             clicked = true
             doingSS = true
-            Thread{
+
+            val delays = parseAutostartDelays()
+
+            Thread {
                 try {
-                    for (i in 0 until 2) {
-                        reset()
-                        clickButton(startButton.x, startButton.y, startButton.z)
-                        Thread.sleep(Random.nextInt(autoStart.toInt(), autoStart.toInt() * 1136 / 1000).toLong())
-                    }
+                    reset()
+                    clickButton(startButton.x, startButton.y, startButton.z)
+                    val firstDelay = delays[0] + if (randomnessAmount > 0) Random.nextLong(randomnessAmount.toLong() + 1) else 0
+                    if (firstDelay > 0) Thread.sleep(firstDelay)
+
+                    reset()
+                    clickButton(startButton.x, startButton.y, startButton.z)
+                    val secondDelay = delays[1] + if (randomnessAmount > 0) Random.nextLong(randomnessAmount.toLong() + 1) else 0
+                    if (secondDelay > 0) Thread.sleep(secondDelay)
+
                     doingSS = true
+                    val thirdDelay = delays[2] + if (randomnessAmount > 0) Random.nextLong(randomnessAmount.toLong() + 1) else 0
+                    if (thirdDelay > 0) Thread.sleep(thirdDelay)
                     clickButton(startButton.x, startButton.y, startButton.z)
                 } catch (e: Exception) {
-                    modMessage("NIGGER")
+                    modMessage("§cError in autostart: ${e.message}")
                 }
             }.start()
         }
