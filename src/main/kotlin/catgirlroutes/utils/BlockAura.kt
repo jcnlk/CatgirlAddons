@@ -1,7 +1,6 @@
 package catgirlroutes.utils
 
 import catgirlroutes.CatgirlRoutes.Companion.mc
-import catgirlroutes.utils.ChatUtils.modMessage
 import catgirlroutes.utils.ClientListener.scheduleTask
 import catgirlroutes.utils.PlayerUtils.recentlySwapped
 import catgirlroutes.utils.render.WorldRenderUtils.drawCustomSizedBoxAt
@@ -15,7 +14,6 @@ import net.minecraftforge.client.event.RenderWorldLastEvent
 import net.minecraftforge.event.world.WorldEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
-
 
 object BlockAura {
 

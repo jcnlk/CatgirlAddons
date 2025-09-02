@@ -20,7 +20,6 @@ import java.awt.Color
 import kotlin.math.cos
 import kotlin.math.sin
 
-
 /**
  * ## A Collection of methods for rendering 2D Objects in orthographic projection for the HUD or for a gui.
  *
@@ -34,7 +33,6 @@ import kotlin.math.sin
  * @author Aton
  */
 object HUDRenderUtils {
-
     private val tessellator: Tessellator = Tessellator.getInstance()
     private val worldRenderer: WorldRenderer = tessellator.worldRenderer
 
@@ -751,4 +749,3 @@ data class Radii(
     val bottomRight: Double = topLeft,
     val bottomLeft: Double = topLeft
 )
-

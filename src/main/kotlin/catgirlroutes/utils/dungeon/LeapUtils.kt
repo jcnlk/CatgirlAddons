@@ -3,7 +3,6 @@ package catgirlroutes.utils.dungeon
 import catgirlroutes.CatgirlRoutes.Companion.mc
 import catgirlroutes.events.impl.PacketReceiveEvent
 import catgirlroutes.events.impl.PacketSentEvent
-import catgirlroutes.utils.ChatUtils.debugMessage
 import catgirlroutes.utils.ChatUtils.devMessage
 import catgirlroutes.utils.ChatUtils.modMessage
 import catgirlroutes.utils.PlayerUtils.airClick
@@ -109,7 +108,10 @@ object LeapUtils {
         devMessage("2")
         val title = event.packet.windowTitle.unformattedText
         devMessage(title)
-        if (!title.contains("Leap")) return
+        if (!title.contains("Leap")) {
+            menuOpened = false
+            return
+        }
         devMessage("3")
         menuOpened = true
         clickedLeap = false
@@ -120,11 +122,13 @@ object LeapUtils {
     fun onCloseServer(event: PacketReceiveEvent) {
         if (event.packet !is S2EPacketCloseWindow) return
         cwid = -1
+        menuOpened = false
     }
 
     @SubscribeEvent
     fun onCloseClient(event: PacketSentEvent) {
         if (event.packet !is C0DPacketCloseWindow) return
         cwid = -1
+        menuOpened = false
     }
 }

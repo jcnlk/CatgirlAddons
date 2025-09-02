@@ -4,7 +4,6 @@ import catgirlroutes.events.impl.MotionUpdateEvent
 import catgirlroutes.utils.PlayerUtils.airClick
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 
-
 open class Rotater {
     companion object {
         var rotater: IRotater? = null

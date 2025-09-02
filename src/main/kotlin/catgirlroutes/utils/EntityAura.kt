@@ -2,7 +2,6 @@ package catgirlroutes.utils
 
 import catgirlroutes.CatgirlRoutes.Companion.mc
 import catgirlroutes.utils.PacketUtils.sendPacket
-import catgirlroutes.utils.distanceToPlayer
 import catgirlroutes.utils.render.WorldRenderUtils
 import net.minecraft.entity.Entity
 import net.minecraft.network.play.client.C02PacketUseEntity
@@ -73,4 +72,3 @@ object EntityAura {
         val action: C02PacketUseEntity.Action,
     )
 }
-
