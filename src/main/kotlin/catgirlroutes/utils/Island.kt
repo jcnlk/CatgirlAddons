@@ -19,6 +19,10 @@ enum class Island(val displayName: String) {
     DarkAuction("Dark Auction"),
     JerryWorkshop("Jerry's Workshop"),
     Kuudra("Kuudra"),
+    Rift("Rift"),
+    Mineshaft("Glacite Mineshafts"),
+    BackwaterBayou("Backwater Bayou"),
+    Galatea("Galatea"), // stupid but idc
     Unknown("(Unknown)");
 
     fun isArea(area: Island): Boolean = this == area
