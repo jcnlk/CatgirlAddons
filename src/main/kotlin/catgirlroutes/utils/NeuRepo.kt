@@ -50,9 +50,35 @@ object NeuRepo {
                 constants = constantsList.toMutableList()
 
                 if (firstLoad) {
-                    reforges = processReforges(constants.getOrNull(27))
-                    essence = processEssence(constants.getOrNull(9))
-//                    gemstones = processGemstones(constants.getOrNull(13))
+                    println("Constants size: ${constants.size}")
+
+                    try {
+                        val reforgeData = constants.find { constant ->
+                            constant.has("reforgeName") ||
+                                    constant.entrySet().any { it.value.isJsonObject && it.value.asJsonObject.has("reforgeName") }
+                        }
+                        reforges = processReforges(reforgeData)
+                        println("Loaded ${reforges.size} reforges")
+                    } catch (e: Exception) {
+                        println("Error processing reforges: ${e.message}")
+                        reforges = emptyList()
+                    }
+
+                    try {
+                        val essenceData = constants.find { constant ->
+                            constant.entrySet().any { entry ->
+                                entry.value.isJsonObject &&
+                                        entry.value.asJsonObject.has("type")
+                            }
+                        }
+                        essence = processEssence(essenceData)
+                        println("Loaded ${essence.size} essence types")
+                    } catch (e: Exception) {
+                        println("Error processing essence: ${e.message}")
+                        essence = emptyList()
+                    }
+
+                    //gemstones = processGemstones(constants.getOrNull(13))
                 }
 
                 val auctionJob = launch { updateItemsWithAuctionData() }

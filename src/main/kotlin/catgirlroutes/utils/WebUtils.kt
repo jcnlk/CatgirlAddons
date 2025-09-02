@@ -4,6 +4,7 @@ import catgirlroutes.CatgirlRoutes.Companion.configPath
 import catgirlroutes.config.DataManager
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.*
 import java.awt.image.BufferedImage
 import java.io.*
@@ -155,13 +156,43 @@ suspend fun downloadRepo(url: String = "https://github.com/NotEnoughUpdates/NotE
                             var entry: ZipEntry? = zip.nextEntry
                             while (entry != null) {
                                 if (entry.name.endsWith(".json")) {
-//                                    println("NeuRepo: ${entry.name}")
-                                    val jsonContent = zip.bufferedReader().readText()
-                                    val value = JsonParser().parse(jsonContent).asJsonObject
-                                    when {
-                                        entry.name.contains("/items/") -> items.add(value)
-                                        entry.name.contains("/mobs/") -> mobs.add(value)
-                                        entry.name.contains("/constants/") -> constants.add(value)
+                                    try {
+                                        val jsonContent = zip.bufferedReader().readText()
+                                        val jsonElement = JsonParser().parse(jsonContent)
+                                        
+                                        when {
+                                            jsonElement.isJsonObject -> {
+                                                val value = jsonElement.asJsonObject
+                                                when {
+                                                    entry.name.contains("/items/") -> items.add(value)
+                                                    entry.name.contains("/mobs/") -> mobs.add(value)
+                                                    entry.name.contains("/constants/") -> constants.add(value)
+                                                }
+                                            }
+                                            jsonElement.isJsonArray -> {
+                                                println("Processing array file: ${entry.name}")
+                                                val jsonArray = jsonElement.asJsonArray
+                                                for (element in jsonArray) {
+                                                    if (element.isJsonObject) {
+                                                        val value = element.asJsonObject
+                                                        when {
+                                                            entry.name.contains("/items/") -> items.add(value)
+                                                            entry.name.contains("/mobs/") -> mobs.add(value)
+                                                            entry.name.contains("/constants/") -> constants.add(value)
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            else -> {
+                                                println("Unknown JSON type in file: ${entry.name}")
+                                            }
+                                        }
+                                    } catch (e: JsonSyntaxException) {
+                                        println("Error parsing JSON in file: ${entry.name}")
+                                        e.printStackTrace()
+                                    } catch (e: IllegalStateException) {
+                                        println("JSON type mismatch in file: ${entry.name}")
+                                        e.printStackTrace()
                                     }
                                 }
                                 entry = zip.nextEntry
