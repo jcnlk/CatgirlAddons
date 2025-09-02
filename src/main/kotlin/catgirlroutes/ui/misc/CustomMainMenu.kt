@@ -11,6 +11,7 @@ import catgirlroutes.ui.misc.elements.impl.button
 import catgirlroutes.utils.downloadImage
 import catgirlroutes.utils.render.HUDRenderUtils.drawRoundedRect
 import catgirlroutes.utils.render.HUDRenderUtils.drawTexturedRect
+import catgirlroutes.module.impl.render.ClickGui.customMenuPic
 import kotlinx.coroutines.launch
 import net.minecraft.client.gui.GuiMultiplayer
 import net.minecraft.client.gui.GuiOptions
@@ -22,11 +23,14 @@ import net.minecraftforge.fml.client.FMLClientHandler
 import java.awt.Color
 import java.awt.Desktop
 import java.net.URI
+import java.io.File
+import java.awt.image.BufferedImage
+import javax.imageio.ImageIO
 
 object CustomMainMenu: Screen(false) { // todo add more shit
 
     private var buttons = listOf<MiscElementButton>()
-
+    private var customBackgroundTexture: ResourceLocation? = null
     private var catTexture: ResourceLocation? = null
 
     override fun onInit() {
@@ -63,7 +67,14 @@ object CustomMainMenu: Screen(false) { // todo add more shit
     }
 
     override fun draw() {
-        drawTexturedRect(ResourceLocation(RESOURCE_DOMAIN, "gui/custom_background.png"), 0.0, 0.0, sr.scaledWidth_double, sr.scaledHeight_double)
+        if (customMenuPic) {
+            if (customBackgroundTexture == null) loadCustomBackground()
+
+            val texture = customBackgroundTexture ?: ResourceLocation(RESOURCE_DOMAIN, "gui/custom_background.png")
+            drawTexturedRect(texture, 0.0, 0.0, sr.scaledWidth_double, sr.scaledHeight_double)
+        } else {
+            drawTexturedRect(ResourceLocation(RESOURCE_DOMAIN, "gui/custom_background.png"), 0.0, 0.0, sr.scaledWidth_double, sr.scaledHeight_double)
+        }
         catTexture?.let {
             drawRoundedRect(width - 210.0, 10.0, 200.0, 200.0, 3.0, Color(239, 137, 175))
             drawTexturedRect(it, width - 209.0, 11.0, 198.0, 198.0)
@@ -102,5 +113,20 @@ object CustomMainMenu: Screen(false) { // todo add more shit
         outlineColour = colour
         outlineHoverColour = hoverColour
         onClick { action.invoke() }
+    }
+
+    private fun loadCustomBackground() {
+        try {
+            val imagePath = File(mc.mcDataDir, "config/catgirlroutes/images/custom_background.png")
+            if (imagePath.exists()) {
+                val image: BufferedImage = ImageIO.read(imagePath)
+                val dynamicTexture = DynamicTexture(image)
+                customBackgroundTexture = mc.textureManager.getDynamicTextureLocation("custom_menu_background", dynamicTexture)
+            }
+        } catch (e: Exception) {
+            println("Failed to load custom menu background: ${e.message}")
+            e.printStackTrace()
+            customBackgroundTexture = null
+        }
     }
 }

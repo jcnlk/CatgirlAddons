@@ -37,6 +37,7 @@ object ClickGui: Module(
     val color by ColorSetting("Color", Color(255, 137, 213), false, "Color theme in the gui.", false)
 
     val customMenu by BooleanSetting("Custom main menu")
+    val customMenuPic by BooleanSetting("Custom main menu picture", false, "Use a custom picture instead of the default one.").withDependency { customMenu }
 //    val windowName by StringSetting("Window name", "CatgirlAddons", description = "Sets window name to a custom one if not empty.")
     val guiName by StringSetting("Gui name", "CatgirlAddons", 15, description = "Name that will be rendered in the gui.")
     val prefixStyle by SelectorSetting("Prefix style", "Long", arrayListOf("Long", "Short", "Custom"), "Chat prefix selection for mod messages.")
