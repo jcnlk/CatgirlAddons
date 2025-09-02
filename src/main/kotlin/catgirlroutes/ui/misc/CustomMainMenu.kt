@@ -12,6 +12,8 @@ import catgirlroutes.utils.downloadImage
 import catgirlroutes.utils.render.HUDRenderUtils.drawRoundedRect
 import catgirlroutes.utils.render.HUDRenderUtils.drawTexturedRect
 import catgirlroutes.module.impl.render.ClickGui.customMenuPic
+import catgirlroutes.ui.clickgui.util.ColorUtil
+import catgirlroutes.ui.clickgui.util.ColorUtil.withAlpha
 import kotlinx.coroutines.launch
 import net.minecraft.client.gui.GuiMultiplayer
 import net.minecraft.client.gui.GuiOptions
@@ -102,16 +104,16 @@ object CustomMainMenu: Screen(false) { // todo add more shit
             callback(null)
         }
     }
-    
+
     private fun button(x: Int, y: Int, title: String, action: () -> Unit) = button {
         at(x, y)
         size(200, 20)
         text = title
         textShadow = true
-        colour = Color(239, 137, 175)
-        hoverColour = Color(253, 45, 121)
-        outlineColour = colour
-        outlineHoverColour = hoverColour
+        colour = ColorUtil.clickGUIColor.withAlpha(0)
+        hoverColour = ColorUtil.clickGUIColor.withAlpha(50)
+        outlineColour = ColorUtil.clickGUIColor
+        outlineHoverColour = ColorUtil.clickGUIColor.brighter()
         onClick { action.invoke() }
     }
 
