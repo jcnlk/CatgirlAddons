@@ -44,8 +44,7 @@ object AutoWeirdos: Module(
      * Used to check incoming chat messages for solutions to the three weirdos puzzle.
      */
     fun onChat(message: String) {
-        if (!inDungeons) return
-        if (currentRoomName != "Three Weirdos") return
+        if (!inDungeons || !weirdosSolver || currentRoomName != "Three Weirdos") return
         if (message.contains("[NPC]")) {
             val npcName = message.substring(message.indexOf("]") + 2, message.indexOf(":"))
             var isSolution = false

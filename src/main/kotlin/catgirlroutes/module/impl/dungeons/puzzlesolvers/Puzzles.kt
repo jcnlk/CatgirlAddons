@@ -40,7 +40,7 @@ object Puzzles : Module (
     var tttReach by NumberSetting("Auto TTT reach", 4.5, 1.0, 6.0, 0.1).withDependency(tttDropdown) { tttSolver && tttAuto }
 
     private val wbDropdown by DropdownSetting("Water board")
-    private val wbSolver by BooleanSetting("Water board solver", "Shows you the solution to the water puzzle.").withDependency(wbDropdown)
+    val wbSolver by BooleanSetting("Water board solver", "Shows you the solution to the water puzzle.").withDependency(wbDropdown)
     private val wbTracer by BooleanSetting("Show Tracer", true, "Shows a tracer to the next lever.").withDependency(wbDropdown) { wbSolver }
 
     private val weirdosDropdown by DropdownSetting("Three weirdos")
@@ -83,7 +83,7 @@ object Puzzles : Module (
     fun onWorldLast(event: RenderWorldLastEvent) {
         if (fillSolver) IceFillSolver.onRenderWorld(Color.GREEN)
         if (tttSolver) TicTacToeSolver.onRenderWorld()
-        if (wbSolver)   WaterSolver.onRenderWorld(wbTracer)
+        if (wbSolver) WaterSolver.onRenderWorld(wbTracer)
     }
 
     @SubscribeEvent
@@ -96,6 +96,6 @@ object Puzzles : Module (
 
     @SubscribeEvent
     fun onRoomEnter(event: RoomEnterEvent) {
-        IceFillSolver.onRoomEnter(event)
+        if (fillSolver) IceFillSolver.onRoomEnter(event)
     }
 }

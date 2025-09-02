@@ -1,8 +1,5 @@
 package catgirlroutes.module.impl.dungeons.puzzlesolvers
 
-import catgirlroutes.CatgirlRoutes.Companion.mc
-import catgirlroutes.commands.impl.Node
-import catgirlroutes.commands.impl.NodeManager
 import catgirlroutes.utils.BlockAura
 import catgirlroutes.utils.BlockAura.blockArray
 import catgirlroutes.utils.ChatUtils.modMessage
@@ -13,6 +10,7 @@ import catgirlroutes.utils.dungeon.DungeonUtils.getRealCoords
 import catgirlroutes.utils.render.WorldRenderUtils.drawLine
 import catgirlroutes.utils.render.WorldRenderUtils.drawStringInWorld
 import catgirlroutes.utils.render.WorldRenderUtils.drawTracer
+import catgirlroutes.module.impl.dungeons.puzzlesolvers.Puzzles.wbSolver
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import net.minecraft.init.Blocks
@@ -100,7 +98,7 @@ object WaterSolver {
     }
 
     fun onTick() {
-        if (patternIdentifier == -1 || solutions.isEmpty() || currentRoomName != "Water Board") return
+        if (patternIdentifier == -1 || solutions.isEmpty() || currentRoomName != "Water Board" || !wbSolver) return
 
         val currentTime = System.currentTimeMillis()
 
