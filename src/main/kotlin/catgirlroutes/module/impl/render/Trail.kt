@@ -5,6 +5,7 @@ import catgirlroutes.module.Category
 import catgirlroutes.module.Module
 import catgirlroutes.module.settings.AlwaysActive
 import catgirlroutes.module.settings.Setting.Companion.withDependency
+import catgirlroutes.module.settings.impl.ActionSetting
 import catgirlroutes.module.settings.impl.BooleanSetting
 import catgirlroutes.module.settings.impl.ColorSetting
 import catgirlroutes.module.settings.impl.NumberSetting
@@ -32,6 +33,9 @@ object Trail: Module(
     private var trailThickness by NumberSetting("Thickness", 3.0, 1.0, 5.0)
     private var trailStay by BooleanSetting("Stay", true)
     private var trailPhase by BooleanSetting("Phase", false)
+    private var trailTrail by ActionSetting("Reset Trail") {
+        posToRender.clear()
+    }
 
     private var posToRender = mutableListOf<Vec3>()
 
