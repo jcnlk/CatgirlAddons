@@ -64,7 +64,8 @@ object EventDispatcher { // I didn't come up with anything better so I'm just sk
                     MinecraftForge.EVENT_BUS.post(packetEvent)
 
                     if (msg is S2DPacketOpenWindow) {
-                        if (msg.windowTitle.toString().noControlCodes.containsOneOf(termGuiTitles)) TermOpenEvent(msg).postAndCatch()
+                        val title = msg.windowTitle.formattedText.noControlCodes
+                        if (title.containsOneOf(termGuiTitles)) TermOpenEvent(msg).postAndCatch()
                     }
                 }
                 ctx?.fireChannelRead(msg)
