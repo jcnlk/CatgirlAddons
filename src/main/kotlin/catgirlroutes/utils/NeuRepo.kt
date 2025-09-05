@@ -54,8 +54,10 @@ object NeuRepo {
 
                     try {
                         val reforgeData = constants.find { constant ->
-                            constant.has("reforgeName") ||
-                                    constant.entrySet().any { it.value.isJsonObject && it.value.asJsonObject.has("reforgeName") }
+                            constant.entrySet().any { entry ->
+                                entry.value.isJsonObject &&
+                                        entry.value.asJsonObject.has("reforgeCosts")
+                            }
                         }
                         reforges = processReforges(reforgeData)
                         println("Loaded ${reforges.size} reforges")
