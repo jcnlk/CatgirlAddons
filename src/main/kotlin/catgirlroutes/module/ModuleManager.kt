@@ -49,7 +49,6 @@ object ModuleManager {
         Auto4,
         AutoLeap,
         LeapOrganiser,
-        Blink,
         CoreClip,
         Doorless,
         GhostBlocks,
@@ -64,14 +63,12 @@ object ModuleManager {
         Watcher,
 
         // Misc
-        Test,
         AutoClicker,
         AutoDialogue,
         AutoExcavator,
         AutoWardrobe,
         BuffDisplay,
         CatMode,
-        CustomTriggers,
         F7sim,
         InstantSprint,
         Inventory,
@@ -83,7 +80,6 @@ object ModuleManager {
         PhoenixAuth,
         RendHelper,
         WitherCloak,
-        Zpew,
 
         // Player
         Animations,

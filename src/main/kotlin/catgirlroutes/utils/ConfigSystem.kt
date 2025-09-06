@@ -3,9 +3,7 @@ package catgirlroutes.utils
 import catgirlroutes.CatgirlRoutes.Companion.configPath
 import catgirlroutes.utils.autop3.actions.RingAction
 import catgirlroutes.utils.autop3.arguments.RingArgument
-import catgirlroutes.utils.customtriggers.TypeName
-import catgirlroutes.utils.customtriggers.actions.TriggerAction
-import catgirlroutes.utils.customtriggers.conditions.TriggerCondition
+import catgirlroutes.utils.TypeName
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.TypeAdapter
@@ -41,8 +39,6 @@ object ConfigSystem {
         }
     **/
     private val gson = GsonBuilder()
-        .registerTypeAdapterFactory(typeAdapter<TriggerAction>())
-        .registerTypeAdapterFactory(typeAdapter<TriggerCondition>())
         .registerTypeAdapterFactory(typeAdapter<RingAction>())
         .registerTypeAdapterFactory(typeAdapter<RingArgument>())
         .setPrettyPrinting().create()

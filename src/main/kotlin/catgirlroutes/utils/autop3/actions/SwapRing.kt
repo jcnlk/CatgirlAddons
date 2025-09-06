@@ -2,7 +2,7 @@ package catgirlroutes.utils.autop3.actions
 
 import catgirlroutes.utils.PlayerUtils.swapFromName
 import catgirlroutes.utils.autop3.Ring
-import catgirlroutes.utils.customtriggers.TypeName
+import catgirlroutes.utils.TypeName
 
 @TypeName("swap")
 class SwapRing(val itemName: String) : RingAction() {

@@ -3,7 +3,7 @@ package catgirlroutes.utils.autop3.actions
 import catgirlroutes.CatgirlRoutes.Companion.mc
 import catgirlroutes.utils.MovementUtils
 import catgirlroutes.utils.autop3.Ring
-import catgirlroutes.utils.customtriggers.TypeName
+import catgirlroutes.utils.TypeName
 
 @TypeName("align")
 data object AlignRing : RingAction() {

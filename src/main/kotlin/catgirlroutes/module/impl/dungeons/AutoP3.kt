@@ -11,29 +11,23 @@ import catgirlroutes.utils.*
 import catgirlroutes.utils.ChatUtils.modMessage
 import catgirlroutes.utils.ClientListener.scheduleTask
 import catgirlroutes.utils.autop3.Ring
-import catgirlroutes.utils.autop3.RingsManager.SPECIAL_ROUTES
-import catgirlroutes.utils.autop3.RingsManager.blinkEditMode
 import catgirlroutes.utils.autop3.RingsManager.currentRoute
 import catgirlroutes.utils.autop3.RingsManager.ringEditMode
-import catgirlroutes.utils.autop3.actions.BlinkRing
 import catgirlroutes.utils.dungeon.DungeonUtils.floorNumber
-import catgirlroutes.utils.render.WorldRenderUtils
 import catgirlroutes.utils.render.WorldRenderUtils.drawCustomSizedBoxAt
 import catgirlroutes.utils.render.WorldRenderUtils.drawEllipse
-import catgirlroutes.utils.render.WorldRenderUtils.drawLine
 import catgirlroutes.utils.render.WorldRenderUtils.drawP3boxWithLayers
-import catgirlroutes.utils.render.WorldRenderUtils.drawStringInWorld
 import catgirlroutes.utils.render.WorldRenderUtils.renderGayFlag
 import catgirlroutes.utils.render.WorldRenderUtils.renderLesbianFlag
 import catgirlroutes.utils.render.WorldRenderUtils.renderTransFlag
 import kotlinx.coroutines.launch
-import net.minecraft.util.Vec3
 import net.minecraftforge.client.event.RenderGameOverlayEvent
 import net.minecraftforge.client.event.RenderWorldLastEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import java.awt.Color
 import java.awt.Color.black
+import java.util.Locale
 
 
 object AutoP3 : Module( // todo make it on tick; fix schizophrenia; add more args
@@ -57,32 +51,6 @@ object AutoP3 : Module( // todo make it on tick; fix schizophrenia; add more arg
     private val colour1 by ColorSetting("Ring colour (inactive)", black, true, "Colour of Normal ring style while inactive").withDependency { style.selected.equalsOneOf("Layers", "Ellipse", "Box") }
     private val colour2 by ColorSetting("Ring colour (active)", Color.white, true, "Colour of Normal ring style while active").withDependency { style.selected.equalsOneOf("Layers", "Ellipse", "Box") }
 
-//    private val disableLength by NumberSetting("Disable length", 50.0, 1.0, 100.0, 1.0, "") // tf is this // I still have no idea what this shit does
-//    private val recordLength by NumberSetting("Recording length", 50.0, 1.0, 999.0, 1.0, "Maximum movement recording length.")
-//    private val packetMovement by BooleanSetting("Packet movement")
-//    private val recordBind by KeyBindSetting("Movement record", Keyboard.KEY_NONE, "Starts recording a movement replay if you are on a movement ring and in edit mode.")
-//        .onPress {
-//            if (movementRecord) {
-//                movementRecord = false
-//                modMessage("Done recording")
-//                return@onPress
-//            }
-//            if (!ringEditMode) return@onPress
-//            rings.forEach { ring ->
-//                if (inRing(ring) && ring.type == "movement") {
-//                    modMessage("Started recording")
-//                    mc.thePlayer.setPosition(
-//                        ring.location.xCoord,
-//                        mc.thePlayer.posY,
-//                        ring.location.zCoord
-//                    )
-//                    movementRecord = true
-//                    movementCurrentRing = ring
-//                    movementCurrentRing!!.packets = mutableListOf()
-//                }
-//            }
-//        }
-
     var termFound = false
 
     private val visited = mutableListOf<Ring>()
@@ -91,11 +59,10 @@ object AutoP3 : Module( // todo make it on tick; fix schizophrenia; add more arg
     fun onTick(event: TickEvent.ClientTickEvent) {
         if (mc.thePlayer == null || event.phase != TickEvent.Phase.END || ringEditMode || (inBossOnly && floorNumber != 7)) return
         currentRoute.forEach { route ->
-            if (SPECIAL_ROUTES[route.name]?.invoke() == false) return@forEach // untested
             route.rings.forEach { ring ->
                 if (ring.inside() && !visited.contains(ring)) {
                     if (ring.checkArgs()) {
-                        if (chatFeedback) modMessage(ring.action.typeName.capitalize())
+                        if (chatFeedback) modMessage(ring.action.typeName.replaceFirstChar { c -> if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString() })
                         scope.launch { ring.execute() }
                         visited.add(ring)
                     }
@@ -121,21 +88,6 @@ object AutoP3 : Module( // todo make it on tick; fix schizophrenia; add more arg
                     "Gay"       -> renderGayFlag(x, y, z, ring.length, ring.width, ring.height)
                     "Trans"     -> renderTransFlag(x, y, z, ring.length, ring.width, ring.height)
                 }
-
-                if (ring.action is BlinkRing) {
-                    val packets = ring.action.packets
-                    for (i in 0 until packets.size - 1) {
-                        val p1 = packets[i]
-                        val p2 = packets[i + 1]
-                        drawLine(
-                            p1.x, p1.y + 0.1, p1.z,
-                            p2.x, p2.y + 0.1, p2.z,
-                            Blink.lineColour, 4.0f, false
-                        )
-
-                        if (Blink.renderAutoP3Text) drawStringInWorld(packets.size.toString(), Vec3(x, y + ring.height, z), scale = 0.035F)
-                    }
-                }
             }
         }
     }
@@ -143,11 +95,12 @@ object AutoP3 : Module( // todo make it on tick; fix schizophrenia; add more arg
     @SubscribeEvent
     fun onRenderGameOverlay(event: RenderGameOverlayEvent.Post) {
         if (!editTitle || (inBossOnly && floorNumber != 7)) return
-        renderText(when {
-            ringEditMode -> "Edit Mode"
-            blinkEditMode -> "Blink Edit"
-            else -> return
-        })
+        renderText(
+            when {
+                ringEditMode -> "Edit Mode"
+                else -> return
+            }
+        )
     }
 
     @SubscribeEvent

@@ -1,11 +1,8 @@
 package catgirlroutes.utils.autop3
 
 import catgirlroutes.module.impl.dungeons.AutoP3.selectedRoute
-import catgirlroutes.module.impl.dungeons.Relics
 import catgirlroutes.utils.ChatUtils.modMessage
 import catgirlroutes.utils.configList
-import catgirlroutes.utils.dungeon.DungeonUtils.getF7Phase
-import catgirlroutes.utils.dungeon.M7Phases
 import catgirlroutes.utils.typeName
 
 object RingsManager {
@@ -13,30 +10,9 @@ object RingsManager {
     val allRoutes get() = routes.toList()
 
     var currentRoute: List<AutoP3Route> = listOf()
-    val SPECIAL_ROUTES = mapOf(
-        "RelicsRoute" to { getF7Phase() == M7Phases.P5 && Relics.doCustomBlink }
-    )
 
     var ringEditMode: Boolean = false
-    var blinkEditMode: Boolean = false
-    var blinkCd = false
 
-//    val actions = listOf(
-//        AlignRing,
-//        BlinkRing(),
-//        BoomRing(Vec3(0.0, 0.0, 0.0)),
-//        CommandRing(""),
-//        EdgeRing,
-//        HClipRing,
-//        JumpRing,
-//        LavaClipRing(0.0),
-//        LookRing,
-//        MotionRing,
-//        StopRing(),
-//        SwapRing(""),
-//        UseItemRing(""),
-//        WalkRing
-//    )
 
     fun init() {
         loadRoute()
@@ -59,10 +35,8 @@ object RingsManager {
         }
 
         selectedRoute = route
-        val r = routes.filter { it.name in selectedRoute.split(" ") && it.name !in SPECIAL_ROUTES.keys }
-        val special = routes.filter { it.name in SPECIAL_ROUTES.keys }.filter { it.name !in r.map { it.name } } // schizo
-
-        currentRoute = r + if (Relics.blinkCustom) special else listOf()
+        val r = routes.filter { it.name in selectedRoute.split(" ") }
+        currentRoute = r
 
         if (msg) modMessage("Loaded §7$route")
     }
@@ -97,7 +71,7 @@ object RingsManager {
     }
 
     fun Ring.format(): String = buildString {
-        append("§7${action.typeName.capitalize()}§r")
+        append("§7${action.typeName.replaceFirstChar { c -> if (c.isLowerCase()) c.titlecase(java.util.Locale.getDefault()) else c.toString() }}§r")
         arguments?.let { args ->
             append(" (${args.joinToString(", ") { it.typeName }})")
         }

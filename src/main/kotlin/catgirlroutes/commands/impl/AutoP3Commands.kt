@@ -13,7 +13,6 @@ import catgirlroutes.utils.PlayerUtils.posZ
 import catgirlroutes.utils.autop3.Ring
 import catgirlroutes.utils.autop3.RingsManager
 import catgirlroutes.utils.autop3.RingsManager.allRoutes
-import catgirlroutes.utils.autop3.RingsManager.blinkEditMode
 import catgirlroutes.utils.autop3.RingsManager.currentRoute
 import catgirlroutes.utils.autop3.RingsManager.format
 import catgirlroutes.utils.autop3.RingsManager.ringEditMode
@@ -27,7 +26,7 @@ import net.minecraft.util.AxisAlignedBB
 import net.minecraft.util.MovingObjectPosition
 import net.minecraft.util.Vec3
 
-val ringTypes: List<String> = listOf("velo", "walk", "look", "stop", "bonzo", "boom", "hclip", "block", "edge", "lavaclip", "jump", "align", "command", "blink")
+val ringTypes: List<String> = listOf("velo", "walk", "look", "stop", "bonzo", "boom", "hclip", "block", "edge", "lavaclip", "jump", "align", "command")
 val removedRings: MutableList<MutableList<Ring>> = mutableListOf()
 
 val autoP3Commands = Commodore("p3") {
@@ -37,7 +36,7 @@ val autoP3Commands = Commodore("p3") {
               §7/p3 create §7<§bnamee§7> §8: §rcreates a route
               §7/p3 add §7<§btype§7> [§bdepth§7] [§bargs..§7] §8: §radds a ring (§7/p3 add §rfor info)
               §7/p3 em §8: §rmakes rings inactive
-              §7/p3 bem §8: §rtoggles blink edit mode
+              
               §7/p3 toggle §8: §rtoggles the module
               §7/p3 remove §7<§brange§7>§r §8: §rremoves rings in range (default value - 2)
               §7/p3 undo §8: §rremoves last placed ring
@@ -59,10 +58,7 @@ val autoP3Commands = Commodore("p3") {
         modMessage("EditMode ${if (ringEditMode) "§aenabled" else "§cdisabled"}")
     }
 
-    literal("bem").runs {
-        blinkEditMode = !blinkEditMode
-        modMessage("Blink edit ${if (blinkEditMode) "§aenabled" else "§cdisabled"}")
-    }
+    
 
     literal("toggle").runs {
         AutoP3.onKeyBind()
@@ -174,7 +170,7 @@ val autoP3Commands = Commodore("p3") {
                   §7- align §8: §raligns the player with the centre of the ring
                   §7- command §8: §rexecutes a specified command
                   §7- swap §8: §rswaps to a specified item
-                  §7- blink §8: §rteleports you
+                  
                 List of args: §bl_, w_, r_, h_, delay_, look, walk, term, stop, fullstop, exact, block, centre, ground, leap_, distance_
                   §7- §blook §8: §rturns player's head
                   §7- §bwalk §8: §rmakes the player walk
@@ -249,7 +245,6 @@ val autoP3Commands = Commodore("p3") {
 
             val action = when(type.lowercase()) {
                 "align"     -> AlignRing
-                "blink"     -> BlinkRing()
                 "edge"      -> EdgeRing
                 "hclip"     -> HClipRing
                 "jump"      -> JumpRing
@@ -278,7 +273,7 @@ val autoP3Commands = Commodore("p3") {
                 else length to width
             }
 
-            if ((action is BlinkRing || action is BoomRing) && (finalLength > 1.0f || finalWidth > 1.0f)) return@runs modMessage("Ring is too big")
+            if ((action is BoomRing) && (finalLength > 1.0f || finalWidth > 1.0f)) return@runs modMessage("Ring is too big")
 
             val ring = Ring(action, Vec3(x, y, z), yaw, pitch, ringArgs, finalLength, finalWidth, height, delay)
             if (!RingsManager.addRing(ring)) return@runs modMessage("Route §7$selectedRoute§r doesn't exist. Do §7/p3 create §7<§bname§7>")

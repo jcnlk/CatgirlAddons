@@ -1,7 +1,7 @@
 package catgirlroutes.utils.autop3.arguments
 
 import catgirlroutes.utils.autop3.Ring
-import catgirlroutes.utils.customtriggers.TypeName
+import catgirlroutes.utils.TypeName
 import catgirlroutes.utils.dungeon.DungeonUtils.dungeonTeammatesNoSelf
 import catgirlroutes.utils.dungeon.DungeonUtils.getP3Section
 import catgirlroutes.utils.dungeon.P3Sections

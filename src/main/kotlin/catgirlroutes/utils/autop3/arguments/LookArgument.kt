@@ -2,7 +2,7 @@ package catgirlroutes.utils.autop3.arguments
 
 import catgirlroutes.utils.autop3.Ring
 import catgirlroutes.utils.autop3.actions.LookRing
-import catgirlroutes.utils.customtriggers.TypeName
+import catgirlroutes.utils.TypeName
 
 @TypeName("look")
 data object LookArgument : RingArgument() {

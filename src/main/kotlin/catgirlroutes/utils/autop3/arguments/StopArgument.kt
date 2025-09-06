@@ -2,7 +2,7 @@ package catgirlroutes.utils.autop3.arguments
 
 import catgirlroutes.utils.autop3.Ring
 import catgirlroutes.utils.autop3.actions.StopRing
-import catgirlroutes.utils.customtriggers.TypeName
+import catgirlroutes.utils.TypeName
 
 @TypeName("stop")
 class StopArgument(val full: Boolean = false) : RingArgument() {
