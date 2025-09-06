@@ -30,7 +30,7 @@ class Window(
     private var scrollTarget = 0.0
     private var scrollOffset = 0.0
 
-    private val scrollAnimation = LinearAnimation<Double>(200)
+    private val scrollAnimation = LinearAnimation<Double>(150)
 
     init {
         ModuleManager.modules
@@ -92,9 +92,18 @@ class Window(
     fun scroll(amount: Int): Boolean {
         if (inModule || !isHovered()) return false
         val h = moduleButtons.filtered().size * 25.0 + 5.0
-        if (h < this.height) return false
-        scrollTarget = (scrollTarget + amount * SCROLL_DISTANCE).coerceIn(-h + this.height, 0.0)
-        scrollAnimation.start(true)
+        if (h < this.height) {
+            if (scrollTarget != 0.0) {
+                scrollTarget = 0.0
+                scrollAnimation.start(true)
+            }
+            return false
+        }
+        val newTarget = (scrollTarget + amount * SCROLL_DISTANCE).coerceIn(-h + this.height, 0.0)
+        if (newTarget != scrollTarget) {
+            scrollTarget = newTarget
+            scrollAnimation.start(true)
+        }
         return true
     }
 
@@ -103,7 +112,9 @@ class Window(
         return mouseX >= this.x && mouseX <= this.x + this.width && mouseY >= this.y && mouseY <= this.y + this.height
     }
 
-    private fun List<ModuleButton>.filtered() = filter { it.module.name.contains(clickGui.searchBar.text, true) }.reversed()
+    private fun List<ModuleButton>.filtered() = filter { 
+        clickGui.searchBar.text.isEmpty() || it.module.name.contains(clickGui.searchBar.text, true) 
+    }.reversed()
 
     companion object {
         const val SCROLL_DISTANCE = 25

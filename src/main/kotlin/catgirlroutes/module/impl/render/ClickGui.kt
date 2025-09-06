@@ -30,7 +30,7 @@ object ClickGui: Module(
 ) {
 
     val clickGui by SelectorSetting("ClickGui", "Cga", arrayListOf("Cga", "Flopper"))
-    val design by SelectorSetting("Design", "New", arrayListOf("JellyLike", "New"), "Design theme of the gui.")
+    val design by SelectorSetting("Design", "New", arrayListOf("JellyLike", "New", "Glass", "Minimal", "Outline"), "Design theme of the gui.")
     val customFont by BooleanSetting("Custom font (WIP; scaling is schizo)")
     val notifications by BooleanSetting("Notifications", true, "Send notifications instead of chat messages")
     val blur by BooleanSetting("Blur", false,  "Toggles the background blur for the gui.")

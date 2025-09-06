@@ -2,6 +2,7 @@ package catgirlroutes.ui.clickguinew.elements.menu
 
 import catgirlroutes.module.settings.impl.ColorSetting
 import catgirlroutes.ui.animations.impl.EaseOutQuadAnimation
+import catgirlroutes.ui.clickgui.util.ColorUtil
 import catgirlroutes.ui.clickgui.util.ColorUtil.hex
 import catgirlroutes.ui.clickgui.util.ColorUtil.withAlpha
 import catgirlroutes.ui.clickgui.util.FontUtil
@@ -43,8 +44,8 @@ class ElementColor(parent: ModuleButton, setting: ColorSetting) : // todo: shado
         width = this@ElementColor.width / 2.0 - (FontUtil.getStringWidth("Hex") + 5.0) + if (setting.allowAlpha) 26.5 else 13.5
         height = DEFAULT_HEIGHT
         prependText = "§7#§r"
-        outlineColour = colorValue.hsbMax(setting).withAlpha(255).darker()
-        outlineHoverColour = colorValue.hsbMax(setting).withAlpha(255).darker()
+        outlineColour = ColorUtil.clickGUIColor.withAlpha(180)
+        outlineHoverColour = ColorUtil.clickGUIColor
     }
 
     private var hexPrev = this.hexTextField.text
@@ -137,8 +138,8 @@ class ElementColor(parent: ModuleButton, setting: ColorSetting) : // todo: shado
         if (dragging != null) {
             this.hexTextField.update {
                 text = colorValue.hex
-                outlineColour = colorValue.hsbMax(setting).withAlpha(255).darker() // FIXME
-                outlineHoverColour = colorValue.hsbMax(setting).withAlpha(255).darker()
+                outlineColour = ColorUtil.clickGUIColor.withAlpha(180)
+                outlineHoverColour = ColorUtil.clickGUIColor
             }
             hexPrev = this.hexTextField.text
         }

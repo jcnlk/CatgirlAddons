@@ -12,6 +12,7 @@ import catgirlroutes.ui.clickgui.util.ColorUtil
 import catgirlroutes.ui.clickgui.util.FontUtil
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.gui.GuiScreen
+import net.minecraft.client.gui.GuiTextField
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.OpenGlHelper
@@ -50,6 +51,8 @@ class ClickGUI : GuiScreen() {
      * Used to create the advanced menu for modules
      */
     var advancedMenu: AdvancedMenu? = null
+    private var searchTextField: GuiTextField? = null
+    var searchText = ""
 
     init {
         FontUtil.setupFontUtils()
@@ -81,6 +84,7 @@ class ClickGUI : GuiScreen() {
         val scaledMouseY = getScaledMouseY()
 
         renderLogo()
+        renderSearchBar(scaledMouseX, scaledMouseY)
 
         /* Calls all panels to render themselves and their module buttons and elements.
 		  * Important to keep in mind: the panel rendered last will be on top.
@@ -137,6 +141,82 @@ class ClickGUI : GuiScreen() {
         )
         GL11.glPopMatrix()
     }
+    
+    private fun renderSearchBar(mouseX: Int, mouseY: Int) {
+        val scaledResolution = ScaledResolution(mc)
+        val searchWidth = 180
+        val searchHeight = 20
+
+        val searchX = (scaledResolution.scaledWidth - searchWidth) / 2
+        val searchY = scaledResolution.scaledHeight - searchHeight - 40
+        
+        if (searchTextField == null) {
+            searchTextField = GuiTextField(0, mc.fontRendererObj, searchX, searchY, searchWidth, searchHeight)
+            searchTextField?.maxStringLength = 50
+            searchTextField?.text = searchText
+            searchTextField?.setEnableBackgroundDrawing(false)
+            searchTextField?.setTextColor(0xFFFFFFFF.toInt())
+            searchTextField?.setDisabledTextColour(0xFFAAAAAA.toInt())
+        }
+        
+        searchTextField?.xPosition = searchX
+        searchTextField?.yPosition = searchY
+
+        GlStateManager.pushMatrix()
+        GlStateManager.scale(1.0/scale, 1.0/scale, 1.0)
+
+        val unscaledX = (searchX * scale).toInt()
+        val unscaledY = (searchY * scale).toInt()
+        val unscaledWidth = (searchWidth * scale).toInt()
+        val unscaledHeight = (searchHeight * scale).toInt()
+
+        val focused = searchTextField?.isFocused == true
+        val borderColor = if (focused) ColorUtil.clickGUIColor.rgb else ColorUtil.outlineColor.rgb
+        val (bgColor, textColor, placeholderColor) = when {
+            ClickGui.design.isSelected("JellyLike") -> {
+                val bg = java.awt.Color(255, 255, 255, 100).rgb
+                Triple(bg, 0xFF202020.toInt(), 0xFF7A7A7A.toInt())
+            }
+            ClickGui.design.isSelected("Glass") -> {
+                val bg = java.awt.Color(0, 0, 0, 110).rgb
+                Triple(bg, 0xFFFFFFFF.toInt(), 0xFFB0B0B0.toInt())
+            }
+            ClickGui.design.isSelected("Minimal") -> {
+                val bg = ColorUtil.bgColor.rgb
+                Triple(bg, 0xFFEFEFEF.toInt(), 0xFFB0B0B0.toInt())
+            }
+            ClickGui.design.isSelected("Outline") -> {
+                val bg = java.awt.Color(0, 0, 0, 0).rgb
+                Triple(bg, 0xFFFFFFFF.toInt(), 0xFFAAAAAA.toInt())
+            }
+            else -> { // New / default
+                val bg = ColorUtil.bgColor.brighter().rgb
+                Triple(bg, 0xFFFFFFFF.toInt(), 0xFFAAAAAA.toInt())
+            }
+        }
+
+        Gui.drawRect(unscaledX - 2, unscaledY - 2, unscaledX + unscaledWidth + 2, unscaledY + unscaledHeight + 2, borderColor)
+        Gui.drawRect(unscaledX, unscaledY, unscaledX + unscaledWidth, unscaledY + unscaledHeight, bgColor)
+
+        val leftPadding = 8
+        val rightPadding = 8
+        searchTextField?.xPosition = unscaledX + leftPadding
+        searchTextField?.yPosition = unscaledY + 2
+        searchTextField?.width = unscaledWidth - (leftPadding + rightPadding)
+        searchTextField?.height = unscaledHeight - 4
+        searchTextField?.setTextColor(textColor)
+        searchTextField?.drawTextBox()
+
+        val font = mc.fontRendererObj
+        if (searchTextField?.text?.isEmpty() == true && !searchTextField!!.isFocused) {
+            val baseline = unscaledY + (unscaledHeight - font.FONT_HEIGHT) / 2
+            font.drawString("Search...", unscaledX + leftPadding, baseline, placeholderColor)
+        }
+
+        GlStateManager.popMatrix()
+
+        searchText = searchTextField?.text ?: ""
+    }
 
     private fun renderUsageInfo() {
         val scaledResolution = ScaledResolution(mc)
@@ -145,6 +225,7 @@ class ClickGUI : GuiScreen() {
             "Left click Module Buttons to toggle the Module.",
             "Right click Module Buttons to extend the Settings dropdown.",
             "Middle click Module Buttons to open the Advanced Gui.",
+            "Press Ctrl+F to focus the search bar.",
             "Disable this Overlay in the Advanced Settings of the Click Gui Module in the Render Category."
         )
 
@@ -206,6 +287,8 @@ class ClickGUI : GuiScreen() {
         val scaledMouseY = getScaledMouseY()
 
         // handle the advanced gui first
+        searchTextField?.mouseClicked(mouseX, mouseY, mouseButton)
+        
         if (advancedMenu?.mouseClicked(scaledMouseX, scaledMouseY, mouseButton) == true){
             // Update the elements of the corresponding module button
             val module = advancedMenu?.module ?: return
@@ -243,6 +326,8 @@ class ClickGUI : GuiScreen() {
     }
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {
+        if (searchTextField?.textboxKeyTyped(typedChar, keyCode) == true) return
+
         /** If in an advanced menu only hande that */
         if (advancedMenu != null) {
             if (keyCode == Keyboard.KEY_ESCAPE && !advancedMenu!!.isListening()) {
@@ -256,6 +341,18 @@ class ClickGUI : GuiScreen() {
          * Reversed order to check the panel on top first! */
         for (panel in panels.reversed()) {
             if (panel.keyTyped(typedChar, keyCode)) return
+        }
+
+        /** Handle Ctrl+F for search focus (keep text) */
+        if (keyCode == Keyboard.KEY_F && isCtrlKeyDown()) {
+            searchTextField?.isFocused = true
+            return
+        }
+
+        /** Handle Escape: just unfocus (keep text) */
+        if (keyCode == Keyboard.KEY_ESCAPE && searchTextField?.isFocused == true) {
+            searchTextField?.isFocused = false
+            return
         }
 
         /** Exits the menu when the toggle key is pressed */

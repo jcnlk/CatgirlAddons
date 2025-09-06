@@ -9,6 +9,7 @@ import catgirlroutes.ui.animations.impl.LinearAnimation
 import catgirlroutes.ui.clickgui.elements.ModuleButton.Companion.haramIcon
 import catgirlroutes.ui.clickgui.elements.ModuleButton.Companion.whipIcon
 import catgirlroutes.ui.clickgui.util.ColorUtil
+import catgirlroutes.ui.clickgui.util.ColorUtil.withAlpha
 import catgirlroutes.ui.clickgui.util.FontUtil
 import catgirlroutes.ui.clickgui.util.FontUtil.fontHeight
 import catgirlroutes.ui.clickgui.util.MouseUtils.mouseX
@@ -43,7 +44,7 @@ class ModuleButton(val module: Module, val window: Window) {
     private val elementsHeight get() = this.menuElements.sumOf { it.getElementHeight() + 5.0 }
 
     private val colourAnimation = ColorAnimation(100)
-    private val scrollAnimation = LinearAnimation<Double>(200)
+    private val scrollAnimation = LinearAnimation<Double>(150)
 
     private var scrollTarget = 0.0
     private var scrollOffset = 0.0
@@ -97,7 +98,9 @@ class ModuleButton(val module: Module, val window: Window) {
         if (!this.window.inModule) {
             GlStateManager.translate(x, y, 0.0)
             val colour = this.colourAnimation.get(ColorUtil.outlineColor, ColorUtil.bgColor, this.module.enabled)
-            drawRoundedBorderedRect(0.0, 0.0, this.width, this.height, 3.0, 1.0, colour, ColorUtil.outlineColor)
+            val isHovered = isButtonHovered()
+            val renderColor = if (isHovered && !this.module.enabled) ColorUtil.clickGUIColor.withAlpha(50) else colour
+            drawRoundedBorderedRect(0.0, 0.0, this.width, this.height, 3.0, 1.0, renderColor, ColorUtil.outlineColor)
             FontUtil.drawString(module.name, 9.5, 2 + fontHeight / 2.0)
 
             if (this.menuElements.isNotEmpty()) {
@@ -137,11 +140,17 @@ class ModuleButton(val module: Module, val window: Window) {
         if (!this.extended || !this.window.isHovered()) return false
         val h = this.elementsHeight + 15.0
         if (h < this.window.height) {
-            this.scrollTarget = 0.0
+            if (this.scrollTarget != 0.0) {
+                this.scrollTarget = 0.0
+                this.scrollAnimation.start(true)
+            }
             return false
         }
-        this.scrollTarget = (this.scrollTarget + amount * SCROLL_DISTANCE).coerceIn(-h + this.window.height, 0.0)
-        this.scrollAnimation.start(true)
+        val newTarget = (this.scrollTarget + amount * SCROLL_DISTANCE).coerceIn(-h + this.window.height, 0.0)
+        if (newTarget != this.scrollTarget) {
+            this.scrollTarget = newTarget
+            this.scrollAnimation.start(true)
+        }
         return true
     }
 

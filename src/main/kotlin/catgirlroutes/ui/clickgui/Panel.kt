@@ -46,10 +46,25 @@ class Panel(
     private var y2 = 0
 
     init {
+        refreshModuleButtons()
+    }
+    
+    fun refreshModuleButtons() {
+        moduleButtons.clear()
         ModuleManager.modules
             .filter { (this.category == Category.SETTINGS && it::class.hasAnnotation<SettingsCategory>()) || it.category == this.category }
             .forEach { this.moduleButtons.add(ModuleButton(it, this)) }
     }
+    
+    fun getVisibleModuleButtons(): List<ModuleButton> {
+        val searchText = clickgui.searchText
+        return if (searchText.isEmpty()) {
+            moduleButtons
+        } else {
+            moduleButtons.filter { it.module.name.contains(searchText, ignoreCase = true) }
+        }
+    }
+    
 
     /**
 	 * Renders the panel and dispatches the rendering of its [moduleButtons].
@@ -73,7 +88,8 @@ class Panel(
         var startY = height
         if (extended && moduleButtons.isNotEmpty()) {
             startY -= scrollOffset
-            for (moduleButton in moduleButtons) {
+            val visibleButtons = getVisibleModuleButtons()
+            for (moduleButton in visibleButtons) {
                 // Render the module Button
                 moduleButton.y = startY
 
@@ -122,7 +138,8 @@ class Panel(
                 return true
             }
         }else if (isMouseOverExtended(mouseX, mouseY)) {
-            for (moduleButton in moduleButtons.reversed()) {
+            val visibleButtons = getVisibleModuleButtons()
+            for (moduleButton in visibleButtons.reversed()) {
                 if (moduleButton.mouseClicked(mouseX, mouseY, mouseButton)) {
                     return true
                 }

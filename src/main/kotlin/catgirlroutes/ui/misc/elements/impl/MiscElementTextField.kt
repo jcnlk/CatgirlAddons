@@ -337,7 +337,7 @@ class MiscElementTextField(
 
         var char = c
         if (char == '\r') char = '\n'
-        text = text.substringSafe(0, cursorPos) + char + text.substring(cursorPos)
+        text = text.substringSafe(0, cursorPos) + char + text.substringSafe(cursorPos, text.length)
         cursorPos++
         selectionPos = cursorPos
     }
