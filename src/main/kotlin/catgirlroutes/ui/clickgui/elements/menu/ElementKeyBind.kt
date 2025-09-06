@@ -5,7 +5,6 @@ import catgirlroutes.ui.clickgui.elements.Element
 import catgirlroutes.ui.clickgui.elements.ElementType
 import catgirlroutes.ui.clickgui.elements.ModuleButton
 import catgirlroutes.ui.clickgui.util.FontUtil
-import catgirlroutes.utils.ChatUtils
 import org.lwjgl.input.Keyboard
 import org.lwjgl.input.Mouse
 
@@ -18,7 +17,6 @@ class ElementKeyBind(parent: ModuleButton, setting: KeyBindSetting) :
     Element<KeyBindSetting>(parent, setting, ElementType.KEY_BIND) {
 
     private val keyBlackList = intArrayOf()
-
 
     override fun renderElement(mouseX: Int, mouseY: Int, partialTicks: Float): Int {
         val keyName = if (setting.value.key > 0)

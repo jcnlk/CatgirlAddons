@@ -6,7 +6,6 @@ import net.minecraft.block.state.IBlockState
 import net.minecraft.init.Blocks
 import net.minecraft.util.*
 
-
 /**
  * Retrieves the block ID at the specified `BlockPos` in the Minecraft world.
  *

@@ -12,7 +12,6 @@ import java.awt.Font
 import java.awt.GraphicsEnvironment
 import java.util.*
 
-
 /**
  * Provides methods for rending text.
  *

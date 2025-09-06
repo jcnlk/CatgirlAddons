@@ -63,5 +63,4 @@ object CatMode: Module( // todo: add cat model mode from skytils april fools!!!?
         return text.split("\\s+".toRegex())
             .joinToString(" ") { replacement }
     }
-
 }

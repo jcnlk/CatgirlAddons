@@ -38,10 +38,6 @@ class ElementColor(parent: ModuleButton, setting: ColorSetting) :
         /** Render the color preview */
         Gui.drawRect(width - 26, 2, width - 1, 11, colorValue.rgb)
 
-        /** Render the tab indicating the drop-down */
-//        Gui.drawRect(0,  13, width, 15, ColorUtil.tabColorBg)
-//        Gui.drawRect((width * 0.4).toInt(), 12, (width * 0.6).toInt(), 15, ColorUtil.tabColor)
-
         if (extended) {
             /**
              * SB
@@ -202,5 +198,4 @@ class ElementColor(parent: ModuleButton, setting: ColorSetting) :
         if (hsb[1] == 0.0f || hsb[2] == 0.0f) hsb[0] = setting.hue // when saturation or brightness are 0 hue is 0 too for some weird reason... took me a few hours to realise
         return Color.getHSBColor(hsb[0], 1f, 1f)
     }
-
 }

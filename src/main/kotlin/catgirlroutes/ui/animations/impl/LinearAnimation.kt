@@ -2,7 +2,6 @@ package catgirlroutes.ui.animations.impl
 
 import catgirlroutes.ui.animations.Animation
 
-
 class LinearAnimation<E>(duration: Long): Animation<E>(duration) where E : Number, E: Comparable<E> {
 
     @Suppress("UNCHECKED_CAST")

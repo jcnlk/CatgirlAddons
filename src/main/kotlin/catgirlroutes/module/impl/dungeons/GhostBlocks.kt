@@ -1,6 +1,5 @@
 package catgirlroutes.module.impl.dungeons
 
-
 import catgirlroutes.CatgirlRoutes.Companion.mc
 import catgirlroutes.module.Category
 import catgirlroutes.module.Module

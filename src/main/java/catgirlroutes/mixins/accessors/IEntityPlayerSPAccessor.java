@@ -20,5 +20,4 @@ public interface IEntityPlayerSPAccessor {
 
     @Accessor("lastReportedPitch")
     float getLastReportedPitch();
-
 }

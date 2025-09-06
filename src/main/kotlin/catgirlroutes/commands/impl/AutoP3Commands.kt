@@ -58,8 +58,6 @@ val autoP3Commands = Commodore("p3") {
         modMessage("EditMode ${if (ringEditMode) "§aenabled" else "§cdisabled"}")
     }
 
-    
-
     literal("toggle").runs {
         AutoP3.onKeyBind()
     }

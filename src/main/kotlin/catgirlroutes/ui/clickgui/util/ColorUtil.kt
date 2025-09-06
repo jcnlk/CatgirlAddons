@@ -122,5 +122,4 @@ object ColorUtil {
     const val sliderBackground = -0xefeff0
 
     val buttonColor = Color(-0x1000000)
-
 }

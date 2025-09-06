@@ -9,7 +9,6 @@ import net.minecraft.entity.player.EntityPlayer
 
 @TypeName("leap")
 class LeapArgument(val amount: Int) : RingArgument() {
-//    override val description: String = "executes the ring when N people leapt to the player"
 
     override fun check(ring: Ring): Boolean { // todo test and prob make a module with the same func
         val section = getP3Section()

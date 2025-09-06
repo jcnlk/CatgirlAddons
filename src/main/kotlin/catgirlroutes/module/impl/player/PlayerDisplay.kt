@@ -36,7 +36,6 @@ import java.awt.Color
 import java.text.NumberFormat
 import java.util.*
 
-
 object PlayerDisplay: Module(
     "Player Display",
     Category.PLAYER,

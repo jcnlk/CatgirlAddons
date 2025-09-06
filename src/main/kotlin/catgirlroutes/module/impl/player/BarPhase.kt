@@ -21,7 +21,6 @@ import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
-
 // edited flopper
 object BarPhase: Module(
     "Bar Phase",

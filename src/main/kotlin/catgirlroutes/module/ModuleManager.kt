@@ -14,7 +14,6 @@ import catgirlroutes.module.settings.impl.KeyBindSetting
 import catgirlroutes.ui.hud.EditHudGUI
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 
-
 /**
  * # This object handles all the modules of the mod.
  *
@@ -113,9 +112,6 @@ object ModuleManager {
      */
     init {
         for (module in modules) {
-//            if (!module::class.hasAnnotation<NoShowInList>()) {
-//                module.addSettings(BooleanSetting("Show in List", true, null, Visibility.ADVANCED_ONLY))
-//            }
             module.keybinding.let {
                 module.register(KeyBindSetting("Key Bind", it, description = "Toggles the module"))
             }
@@ -156,7 +152,6 @@ object ModuleManager {
      */
     @SubscribeEvent
     fun activateModuleKeyBinds(event: PreKeyInputEvent) {
-//        modules.stream().filter { module -> module.keyCode == event.key }.forEach { module -> module.onKeyBind() }
         for (module in modules) {
             for (setting in module.settings) {
                 if (setting is KeyBindSetting && setting.value.key == event.key) {
@@ -173,7 +168,6 @@ object ModuleManager {
      */
     @SubscribeEvent
     fun activateModuleMouseBinds(event: PreMouseInputEvent) {
-//        modules.stream().filter { module -> module.keyCode + 100 == event.button }.forEach { module -> module.onKeyBind() }
         for (module in modules) {
             for (setting in module.settings) {
                 if (setting is KeyBindSetting && setting.value.key + 100 == event.button) {

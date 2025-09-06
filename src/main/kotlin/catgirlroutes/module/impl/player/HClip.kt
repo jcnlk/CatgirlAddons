@@ -88,5 +88,4 @@ object HClip : Module(
         else
             customSound
     }
-
 }

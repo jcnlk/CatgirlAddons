@@ -391,4 +391,3 @@ fun ItemStack.toJson(): JsonObject {
 
     return json
 }
-

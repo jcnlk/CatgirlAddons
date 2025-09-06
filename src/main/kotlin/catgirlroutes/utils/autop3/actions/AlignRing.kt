@@ -7,8 +7,6 @@ import catgirlroutes.utils.TypeName
 
 @TypeName("align")
 data object AlignRing : RingAction() {
-//    override val description: String = "aligns the player with the centre of the ring"
-//    override val aliases: List<String> = listOf("middle", "centre", "center")
 
     override fun execute(ring: Ring) {
         if (ring.length <= 1 && ring.width <= 1) {

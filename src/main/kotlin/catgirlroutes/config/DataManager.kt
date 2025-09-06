@@ -65,5 +65,4 @@ object DataManager { // todo add shit
             emptyList()
         }
     }
-
 }

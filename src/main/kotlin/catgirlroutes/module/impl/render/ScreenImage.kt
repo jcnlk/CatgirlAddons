@@ -8,7 +8,6 @@ import catgirlroutes.module.settings.impl.ActionSetting
 import catgirlroutes.module.settings.impl.HudSetting
 import catgirlroutes.module.settings.impl.ListSetting
 import catgirlroutes.module.settings.impl.SelectorSetting
-import catgirlroutes.utils.ChatUtils.debugMessage
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.texture.DynamicTexture

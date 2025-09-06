@@ -3,13 +3,11 @@ package catgirlroutes.module.impl.dungeons
 import catgirlroutes.events.impl.EntityRemovedEvent
 import catgirlroutes.module.Category
 import catgirlroutes.module.Module
-import catgirlroutes.module.settings.RegisterHudElement
 import catgirlroutes.module.settings.impl.BooleanSetting
 import catgirlroutes.module.settings.impl.HudSetting
 import catgirlroutes.module.settings.impl.NumberSetting
 import catgirlroutes.ui.clickgui.util.FontUtil.drawStringWithShadow
 import catgirlroutes.utils.ClientListener.scheduleTask
-import catgirlroutes.utils.render.WorldRenderUtils.displayTitle
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import java.awt.Color
 

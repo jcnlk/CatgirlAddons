@@ -22,7 +22,6 @@ import net.minecraftforge.client.event.MouseEvent
 import net.minecraftforge.event.world.WorldEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
-import org.lwjgl.input.Mouse
 import kotlin.random.Random
 
 
@@ -100,12 +99,6 @@ object AutoClicker: Module(
     @SubscribeEvent
     fun onTick(event: TickEvent.ClientTickEvent) {
         if (event.phase != TickEvent.Phase.END) return
-
-//        if (Mouse.isButtonDown(0) && !breakingBlocks() && !leftClicking && leftClick && shouldClick) { // should continue clicking after breaking blocks I think
-//            leftClicking = true
-//            leftClickJob?.cancel()
-//            leftClickJob = scope.launch { leftClicker() }
-//        }
 
         val current = mc.thePlayer?.inventory?.currentItem ?: return
 

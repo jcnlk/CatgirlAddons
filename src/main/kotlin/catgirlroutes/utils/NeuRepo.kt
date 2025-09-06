@@ -79,8 +79,6 @@ object NeuRepo {
                         println("Error processing essence: ${e.message}")
                         essence = emptyList()
                     }
-
-                    //gemstones = processGemstones(constants.getOrNull(13))
                 }
 
                 val auctionJob = launch { updateItemsWithAuctionData() }

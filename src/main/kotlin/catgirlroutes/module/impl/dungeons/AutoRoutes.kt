@@ -29,7 +29,6 @@ import catgirlroutes.utils.PlayerUtils.swapFromName
 import catgirlroutes.utils.dungeon.DungeonUtils.getRealCoords
 import catgirlroutes.utils.dungeon.DungeonUtils.getRealYaw
 import catgirlroutes.utils.dungeon.DungeonUtils.inDungeons
-import catgirlroutes.utils.dungeon.DungeonUtils.isSecret
 import catgirlroutes.utils.dungeon.ScanUtils.currentRoom
 import catgirlroutes.utils.render.WorldRenderUtils.drawBlock
 import catgirlroutes.utils.render.WorldRenderUtils.drawCylinder
@@ -151,7 +150,6 @@ object AutoRoutes : Module( // todo recode this shit
 
     @SubscribeEvent
     fun onRenderWorld(event: RenderWorldLastEvent) {
-        //feedbackMessage(nodes.toString())
         nodes.forEach { node ->
             val realLocation = currentRoom?.getRealCoords(node.location) ?: node.location
 
@@ -228,16 +226,6 @@ object AutoRoutes : Module( // todo recode this shit
 
         this.lastC08 = totalTicks
         this.stupid = false
-
-//        val blockPos = event.packet.position
-//        val blockState = mc.theWorld.getBlockState(blockPos)
-//        if (isSecret(blockState, blockPos)) {
-//            scheduleTask {
-//                if (this.stupid) {
-//                    PacketUtils.sendPacket(C08PacketPlayerBlockPlacement(event.packet.stack))
-//                }
-//            }
-//        }
     }
 
     @SubscribeEvent
@@ -387,5 +375,4 @@ object AutoRoutes : Module( // todo recode this shit
     private fun feedbackMessage(message: String) {
         if (chatFeedback) modMessage(message)
     }
-
 }

@@ -17,6 +17,5 @@ public abstract class MovementUpdateEvent extends MixinAbstractClientPlayer { //
 
     @Inject(method = "onUpdateWalkingPlayer", at = @At("RETURN"))
     private void onUpdateWalkingPlayerPost(CallbackInfo ci) {
-        //ServerRotateUtils.INSTANCE.handlePost();
     }
 }

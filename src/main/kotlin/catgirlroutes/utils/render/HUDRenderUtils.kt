@@ -531,9 +531,6 @@ object HUDRenderUtils {
     }
 
     fun drawRoundedHueBox(x: Double, y: Double, width: Double, height: Double, radius: Double, vertical: Boolean = false) { // todo fix
-//        StencilUtils.write(false)
-//        drawRoundedRect(x, y, width, height, radius, Color.WHITE)
-//        StencilUtils.erase(false)
 
         if (vertical) {
             for (i in 0 until height.toInt()) {
@@ -548,8 +545,6 @@ object HUDRenderUtils {
                 renderRect(x + i, y, 1.0, height, Color(color))
             }
         }
-
-//        StencilUtils.dispose()
     }
 
     fun drawItemStackWithText(stack: ItemStack?, x: Double, y: Double, text: String? = null) {
@@ -584,12 +579,6 @@ object HUDRenderUtils {
     fun drawPlayerOnScreen(x: Double, y: Double, partialTicks: Float, scale: Double = 1.0) {
 
         val ent = mc.thePlayer
-
-//        val interpolatedYaw = ent.prevRotationYaw + (ent.rotationYaw - ent.prevRotationYaw) * partialTicks
-//        val interpolatedPitch = ent.prevRotationPitch + (ent.rotationPitch - ent.prevRotationPitch) * partialTicks
-//
-//        ent.rotationYaw = interpolatedYaw.coerceIn(-45.0f, 45.0f)
-//        ent.rotationPitch = interpolatedPitch.coerceIn(-30.0f, 30.0f)
 
         GlStateManager.enableColorMaterial()
         GlStateManager.pushMatrix()

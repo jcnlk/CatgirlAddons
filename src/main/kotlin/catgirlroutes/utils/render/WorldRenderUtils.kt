@@ -561,7 +561,6 @@ object WorldRenderUtils {
 
         if (relocate) GlStateManager.translate(-renderManager.viewerPosX, -renderManager.viewerPosY, -renderManager.viewerPosZ)
 
-        ////worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION)
         GlStateManager.color(color.red.toFloat() / 255f, color.green.toFloat() / 255f,
             color.blue.toFloat() / 255f, color.alpha.toFloat() / 255f)
 
@@ -646,37 +645,6 @@ object WorldRenderUtils {
         drawSquare(x, yMiddle, z, xWidth, zWidth, color, thickness, phase, relocate)
         drawSquare(x, y + 0.02, z, xWidth, zWidth, color, thickness, phase, relocate)
     }
-    /*
-    private fun drawSquare(x: Double, y: Double, z: Double, xWidth: Double, zWidth: Double, color: Color, thickness: Float = 3f, phase: Boolean = true, relocate: Boolean = true) {
-        GlStateManager.disableLighting()
-        GlStateManager.enableBlend()
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
-        GL11.glLineWidth(thickness)
-        if (phase) GlStateManager.disableDepth()
-        GlStateManager.disableTexture2D()
-
-        GlStateManager.pushMatrix()
-
-        if (relocate) GlStateManager.translate(-renderManager.viewerPosX, -renderManager.viewerPosY, -renderManager.viewerPosZ)
-        worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION)
-        GlStateManager.color(color.red.toFloat() / 255f, color.green.toFloat() / 255f,
-            color.blue.toFloat() / 255f, 1f)
-
-        worldRenderer.pos(x + xWidth, y, z + zWidth).endVertex()
-        worldRenderer.pos(x + xWidth, y, z).endVertex()
-        worldRenderer.pos(x, y, z).endVertex()
-        worldRenderer.pos(x, y, z + zWidth).endVertex()
-        worldRenderer.pos(x + xWidth, y, z + zWidth).endVertex()
-
-        tessellator.draw()
-
-        GlStateManager.popMatrix()
-        GlStateManager.enableTexture2D()
-        GlStateManager.enableDepth()
-        GlStateManager.disableBlend()
-    }
-
-     */
 
     /**
      * Modified https://github.com/q12323/Meow-Client/blob/main/utils/RenderUtils.js#L46
@@ -1018,11 +986,4 @@ object WorldRenderUtils {
         if (event.phase != TickEvent.Phase.START) return
         titleTicks--
     }
-
-//    val displayCommands = Commodore("display") {
-//        literal("set").runs {
-//            string: GreedyString ->
-//            displayTitle(string.toString(), 80)
-//        }
-//    }
 }

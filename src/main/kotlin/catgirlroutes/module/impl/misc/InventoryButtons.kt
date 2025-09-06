@@ -27,7 +27,6 @@ import net.minecraftforge.event.world.WorldEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import org.lwjgl.input.Mouse
 
-
 object InventoryButtons : Module(
     "Inventory Buttons",
     Category.MISC,

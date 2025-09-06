@@ -6,7 +6,6 @@ import catgirlroutes.ui.clickgui.util.ColorUtil
 import catgirlroutes.ui.clickgui.util.FontUtil
 import catgirlroutes.ui.clickgui.util.FontUtil.fontHeight
 import catgirlroutes.ui.clickgui.util.FontUtil.wrapText
-//import catgirlroutes.ui.clickgui.util.ColorUtil
 import catgirlroutes.utils.Notifications
 import catgirlroutes.utils.render.HUDRenderUtils
 import net.minecraft.client.gui.Gui

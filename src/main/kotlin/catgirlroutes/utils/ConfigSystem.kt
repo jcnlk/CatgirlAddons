@@ -3,7 +3,6 @@ package catgirlroutes.utils
 import catgirlroutes.CatgirlRoutes.Companion.configPath
 import catgirlroutes.utils.autop3.actions.RingAction
 import catgirlroutes.utils.autop3.arguments.RingArgument
-import catgirlroutes.utils.TypeName
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.TypeAdapter

@@ -4,10 +4,7 @@ import catgirlroutes.ui.misc.inventorybuttons.InventoryButton
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import net.minecraft.item.Item
-import net.minecraft.item.ItemStack
 import java.io.File
-
 
 object InventoryButtonsConfig {
     var allButtons: MutableList<InventoryButton> = mutableListOf()

@@ -86,5 +86,4 @@ object Notifications {
             return 1 + c3 * (t - 1).pow(3) + c1 * (t - 1).pow(2)
         }
     }
-
 }

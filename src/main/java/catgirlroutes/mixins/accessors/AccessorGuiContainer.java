@@ -29,5 +29,4 @@ public interface AccessorGuiContainer {
 
     @Accessor("ySize")
     int getYSize();
-
 }

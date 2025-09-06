@@ -6,7 +6,6 @@ import catgirlroutes.utils.TypeName
 
 @TypeName("walk")
 data object WalkRing : RingAction() {
-//    override val description: String = "makes the player walk"
 
     override fun execute(ring: Ring) {
         MovementUtils.stopMovement()

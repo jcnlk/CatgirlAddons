@@ -9,7 +9,6 @@ import catgirlroutes.module.Module
 import catgirlroutes.module.settings.Setting.Companion.withDependency
 import catgirlroutes.module.settings.impl.*
 import catgirlroutes.ui.clickgui.util.ColorUtil.withAlpha
-import catgirlroutes.utils.ChatUtils.debugMessage
 import catgirlroutes.utils.ClientListener.scheduleTask
 import catgirlroutes.utils.PlayerUtils.playLoudSound
 import catgirlroutes.utils.dungeon.DungeonUtils.dungeonItemDrops

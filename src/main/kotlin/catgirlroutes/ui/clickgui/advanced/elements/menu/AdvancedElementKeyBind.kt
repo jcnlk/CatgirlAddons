@@ -1,7 +1,6 @@
 package catgirlroutes.ui.clickgui.advanced.elements.menu
 
 import catgirlroutes.module.Module
-import catgirlroutes.module.settings.impl.DummySetting
 import catgirlroutes.module.settings.impl.KeyBindSetting
 import catgirlroutes.ui.clickgui.advanced.AdvancedMenu
 import catgirlroutes.ui.clickgui.advanced.elements.AdvancedElement

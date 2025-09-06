@@ -42,15 +42,4 @@ val catgirlAddonsCommands = Commodore("catgirladdons", "cataddons", "cga") {
             display = BazaarOverlay()
         } else modMessage("You're not in skyblock")
     }
-
-//    executable {
-//        param("moduleName").suggests { ModuleManager.modules.map { it.name } }
-//
-//        literal("toggle").runs { moduleName: GreedyString ->
-//            val module = ModuleManager.getModuleByName(moduleName.toString()) ?: return@runs
-//            module.toggle()
-//            if (ClickGui.notifications) Notifications.send("${if (module.enabled) "Enabled" else "Disabled"} ${module.name}", "", icon = if (module.enabled) "check.png" else "x.png")
-//            else modMessage("${module.name} ${if (module.enabled) "§aenabled" else "§cdisabled"}.")
-//        }
-//    }
 }

@@ -42,18 +42,6 @@ object EventDispatcher { // I didn't come up with anything better so I'm just sk
         if (event.packet is S02PacketChat) ChatPacket(event.packet.chatComponent.unformattedText.noControlCodes, event.packet.chatComponent.formattedText).postAndCatch()
     }
 
-//    @SubscribeEvent
-//    fun onPacketSent(event: PacketSentEvent) {
-//        if (event.packet !is C02PacketUseEntity) return
-//        val packet: C02PacketUseEntity = event.packet
-//        val entity = packet.getEntityFromWorld(mc.theWorld)
-//        if (entity !is EntityArmorStand) return
-//        val armorStand: EntityArmorStand = entity
-//        if (armorStand.name.noControlCodes.contains("Inactive Terminal", true)) {
-//            TermOpenEvent(C02PacketUseEntity()).postAndCatch()
-//        }
-//    }
-
     @SubscribeEvent
     fun onNetworkEvent(event: FMLNetworkEvent.ClientConnectedToServerEvent) {
         event.manager.channel().pipeline().addAfter("fml:packet_handler", "CGA_packet_handler", object : ChannelDuplexHandler() {

@@ -42,10 +42,6 @@ class AdvancedElementColor(
         // Render the color preview
         Gui.drawRect(settingWidth - 26, 2, settingWidth - 1, 11, colorValue.rgb)
 
-        // Render the tab indicating the drop down
-//        Gui.drawRect(0, 13, settingWidth, 15, 0x77000000)
-//        Gui.drawRect((settingWidth * 0.4).toInt(), 12, (settingWidth * 0.6).toInt(), 15, color)
-
         if (comboextended) {
             /**
              * SB

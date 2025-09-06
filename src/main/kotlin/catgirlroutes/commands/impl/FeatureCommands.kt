@@ -72,5 +72,3 @@ val autoClicker = Commodore("cgaac") {
         modMessage("Cleared!")
     }
 }
-
-

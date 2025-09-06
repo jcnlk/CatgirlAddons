@@ -6,7 +6,6 @@ import catgirlroutes.utils.TypeName
 
 @TypeName("hclip")
 data object HClipRing : RingAction() {
-//    override val description: String = "uses hclip"
     override fun execute(ring: Ring) {
         HClip.hClip(ring.yaw)
     }

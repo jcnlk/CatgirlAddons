@@ -14,9 +14,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.network.FMLNetworkEvent
 
 object LocationManager {
-
-    //var onHypixel: Boolean = false
-
     var onHypixel: Boolean = false
     var inSkyblock: Boolean = false
 

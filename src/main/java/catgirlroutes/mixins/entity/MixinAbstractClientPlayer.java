@@ -10,7 +10,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-
 @Mixin(value = AbstractClientPlayer.class, priority = Integer.MAX_VALUE)
 public class MixinAbstractClientPlayer {
 
@@ -21,5 +20,4 @@ public class MixinAbstractClientPlayer {
     public void getLocationCape(CallbackInfoReturnable<ResourceLocation> cir) {
         CgaUser.INSTANCE.capeHook(cir, playerInfo);
     }
-
 }

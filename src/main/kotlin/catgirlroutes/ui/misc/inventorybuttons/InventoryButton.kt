@@ -9,7 +9,6 @@ import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import java.awt.Color
 
-
 class InventoryButton(
     val x: Int,
     val y: Int,
@@ -59,5 +58,4 @@ class InventoryButton(
         val colour: Color = Color(139, 139, 139, 155)
         val borderColour: Color = Color(250, 250, 250, 155)
     }
-
 }

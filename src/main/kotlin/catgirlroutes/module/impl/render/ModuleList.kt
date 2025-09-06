@@ -45,8 +45,7 @@ object ModuleList : Module(
                 }
         }
     }
-
-
+    
     private val activeModuleList: List<String>
         get() = modules.mapNotNull {
             if (it.enabled && it.name != this.name) it.name else null

@@ -1,6 +1,5 @@
 package catgirlroutes.ui.clickgui.elements.menu
 
-import catgirlroutes.module.settings.impl.BooleanSetting
 import catgirlroutes.module.settings.impl.HudSetting
 import catgirlroutes.ui.clickgui.elements.Element
 import catgirlroutes.ui.clickgui.elements.ElementType

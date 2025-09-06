@@ -1,7 +1,6 @@
 package catgirlroutes.ui.clickgui.advanced.elements.menu
 
 import catgirlroutes.module.Module
-import catgirlroutes.module.settings.impl.BooleanSetting
 import catgirlroutes.module.settings.impl.HudSetting
 import catgirlroutes.ui.clickgui.advanced.AdvancedMenu
 import catgirlroutes.ui.clickgui.advanced.elements.AdvancedElement

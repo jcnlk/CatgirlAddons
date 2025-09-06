@@ -35,5 +35,4 @@ public abstract class MixinEntity {
 
     @Shadow
     public abstract boolean isSprinting();
-
 }

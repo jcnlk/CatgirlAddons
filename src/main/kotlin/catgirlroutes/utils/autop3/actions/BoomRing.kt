@@ -10,15 +10,12 @@ import net.minecraft.util.Vec3
 
 @TypeName("boom")
 class BoomRing(val vec3: Vec3?) : RingAction() {
-//    override val description: String = "places boom tnt"
-//    override val aliases: List<String> = listOf("denmark")
 
     override fun execute(ring: Ring) {
         val type = if (boomType.selected == "Regular") "superboom tnt" else "infinityboom tnt"
         swapFromName(type) {
             RotationUtils.snapTo(ring.yaw, ring.pitch)
             leftClick2()
-            // BlockAura.addBlockNoDupe(vec3, 4.5) // this shit is schizo
         }
     }
 }

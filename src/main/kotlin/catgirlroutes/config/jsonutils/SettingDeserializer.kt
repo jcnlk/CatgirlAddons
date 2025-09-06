@@ -1,6 +1,5 @@
 package catgirlroutes.config.jsonutils
 
-
 import catgirlroutes.module.settings.Setting
 import catgirlroutes.module.settings.impl.*
 import com.google.gson.*

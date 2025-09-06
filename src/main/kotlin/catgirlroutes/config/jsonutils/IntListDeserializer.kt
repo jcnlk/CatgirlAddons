@@ -20,8 +20,6 @@ class IntListDeserializer : JsonDeserializer<MutableList<Int>> {
                 ?: mutableListOf<String>())
                 .map { it.toIntOrNull() ?: 0 }
                 .toMutableList()
-//            Gson().fromJson(json, typeOfT)
-            // object : TypeToken<MutableList<Int>>(){}.type
 
         } else {
             mutableListOf<Int>()

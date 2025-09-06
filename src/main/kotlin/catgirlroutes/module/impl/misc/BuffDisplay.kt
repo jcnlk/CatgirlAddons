@@ -4,10 +4,7 @@ import catgirlroutes.module.Module
 import catgirlroutes.CatgirlRoutes.Companion.mc
 import catgirlroutes.events.impl.PacketReceiveEvent
 import catgirlroutes.events.impl.PacketSentEvent
-import catgirlroutes.module.settings.RegisterHudElement
 import catgirlroutes.module.settings.impl.HudSetting
-import catgirlroutes.ui.hud.HudElement
-import catgirlroutes.utils.ChatUtils.modMessage
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement
 import net.minecraft.network.play.server.S08PacketPlayerPosLook
 import net.minecraft.network.play.server.S29PacketSoundEffect

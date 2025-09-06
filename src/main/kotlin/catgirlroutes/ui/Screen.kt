@@ -90,7 +90,5 @@ abstract class Screen(private val forceScale: Boolean = true) : GuiScreen() {
 
     companion object {
         const val CLICK_GUI_SCALE = 2.0
-//        var sr = ScaledResolution(mainMc)
-//        var scale = CLICK_GUI_SCALE / sr.scaleFactor
     }
 }

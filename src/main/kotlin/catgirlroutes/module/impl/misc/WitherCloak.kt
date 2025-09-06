@@ -81,11 +81,4 @@ object WitherCloak: Module(
         lastCloak = (System.currentTimeMillis() * getMageCooldownMultiplier()).toLong()
         cloakCd = cd
     }
-
-    /*
-    Not enough mana! Creeper Veil De-activated!
-    Creeper Veil De-activated! (Expired)
-    Creeper Veil Activated!
-    Creeper Veil De-activated!
-     */
 }

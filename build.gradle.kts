@@ -1,6 +1,4 @@
 import org.apache.commons.lang3.SystemUtils
-import java.io.FileOutputStream
-import java.net.URL
 
 plugins {
     idea

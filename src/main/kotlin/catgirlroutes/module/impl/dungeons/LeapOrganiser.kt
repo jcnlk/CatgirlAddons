@@ -2,7 +2,6 @@ package catgirlroutes.module.impl.dungeons
 
 import catgirlroutes.module.Category
 import catgirlroutes.module.Module
-import catgirlroutes.module.settings.impl.ActionSetting
 import catgirlroutes.module.settings.impl.OrderSetting
 import catgirlroutes.module.settings.impl.SelectorSetting
 import catgirlroutes.utils.ChatUtils.commandAny

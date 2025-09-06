@@ -26,4 +26,3 @@ public abstract class MixinChunk {
         if (postAndCatch(new BlockChangeEvent(pos, this.getBlockState(pos), state, this.worldObj))) cir.setReturnValue(this.getBlockState(pos));
     }
 }
-

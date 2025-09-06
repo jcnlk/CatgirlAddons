@@ -21,7 +21,6 @@ import java.awt.Color
 import kotlin.math.floor
 import kotlin.reflect.full.hasAnnotation
 
-
 /**
  * Sets up a hud Element.
  * This constructor takes care of creating the [NumberSetting]s required to save the position and scale of the hud
@@ -127,7 +126,6 @@ abstract class HudElement(
     open fun renderHud() = Unit
 
     open fun preview() {
-//        drawStringWithShadow("${parentModule.name} $name", 0.0, 0.0)
     }
 
     /**
@@ -282,4 +280,3 @@ data class ElementBounds(
     val centreX: Double,
     val centreY: Double
 )
-
