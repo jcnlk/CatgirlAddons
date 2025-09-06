@@ -13,24 +13,20 @@ object ColorUtil {
         get() = ClickGui.color
 
     val elementColor: Color
-        get() = when {
-            ClickGui.design.isSelected("New") -> Color(newColor)
-            ClickGui.design.isSelected("JellyLike") -> Color(jellyColor)
-            ClickGui.design.isSelected("Glass") -> Color(glassElement)
-            ClickGui.design.isSelected("Minimal") -> Color(minimalElement)
-            ClickGui.design.isSelected("Outline") -> Color(outlineElement)
-            else -> Color(newColor)
-        }
+        get() = if (ClickGui.design.isSelected("New"))
+            Color(newColor)
+        else if (ClickGui.design.isSelected("JellyLike"))
+            Color(jellyColor)
+        else
+            Color.black
 
     val bgColor: Color
-        get() = when {
-            ClickGui.design.isSelected("New") -> Color(newColor)
-            ClickGui.design.isSelected("JellyLike") -> Color(255, 255, 255, 50)
-            ClickGui.design.isSelected("Glass") -> Color(0, 0, 0, 110)
-            ClickGui.design.isSelected("Minimal") -> Color(minimalBg)
-            ClickGui.design.isSelected("Outline") -> Color(0, 0, 0, 0)
-            else -> Color(newColor)
-        }
+        get() = if (ClickGui.design.isSelected("New"))
+            Color(newColor)
+        else if (ClickGui.design.isSelected("JellyLike"))
+            Color(255,255,255,50)
+        else
+            Color.black
 
     val outlineColor : Color
         get() = clickGUIColor.darker()
@@ -115,10 +111,6 @@ object ColorUtil {
 
     const val jellyColor = -0x44eaeaeb
     const val newColor = -0xdcdcdd
-    const val glassElement = 0x55101010
-    val minimalElement = 0xFF2B2B2B.toInt()
-    const val outlineElement = 0x22000000
-    val minimalBg = 0xFF1E1E1E.toInt()
     const val moduleButtonColor = -0xe5e5e6
     const val textcolor = -0x101011
 

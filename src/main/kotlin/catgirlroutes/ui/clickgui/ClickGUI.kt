@@ -172,27 +172,12 @@ class ClickGUI : GuiScreen() {
 
         val focused = searchTextField?.isFocused == true
         val borderColor = if (focused) ColorUtil.clickGUIColor.rgb else ColorUtil.outlineColor.rgb
-        val (bgColor, textColor, placeholderColor) = when {
-            ClickGui.design.isSelected("JellyLike") -> {
-                val bg = java.awt.Color(255, 255, 255, 100).rgb
-                Triple(bg, 0xFF202020.toInt(), 0xFF7A7A7A.toInt())
-            }
-            ClickGui.design.isSelected("Glass") -> {
-                val bg = java.awt.Color(0, 0, 0, 110).rgb
-                Triple(bg, 0xFFFFFFFF.toInt(), 0xFFB0B0B0.toInt())
-            }
-            ClickGui.design.isSelected("Minimal") -> {
-                val bg = ColorUtil.bgColor.rgb
-                Triple(bg, 0xFFEFEFEF.toInt(), 0xFFB0B0B0.toInt())
-            }
-            ClickGui.design.isSelected("Outline") -> {
-                val bg = java.awt.Color(0, 0, 0, 0).rgb
-                Triple(bg, 0xFFFFFFFF.toInt(), 0xFFAAAAAA.toInt())
-            }
-            else -> { // New / default
-                val bg = ColorUtil.bgColor.brighter().rgb
-                Triple(bg, 0xFFFFFFFF.toInt(), 0xFFAAAAAA.toInt())
-            }
+        val (bgColor, textColor, placeholderColor) = if (ClickGui.design.isSelected("JellyLike")) {
+            val bg = java.awt.Color(255, 255, 255, 100).rgb
+            Triple(bg, 0xFF202020.toInt(), 0xFF7A7A7A.toInt())
+        } else {
+            val bg = ColorUtil.bgColor.brighter().rgb
+            Triple(bg, 0xFFFFFFFF.toInt(), 0xFFAAAAAA.toInt())
         }
 
         Gui.drawRect(unscaledX - 2, unscaledY - 2, unscaledX + unscaledWidth + 2, unscaledY + unscaledHeight + 2, borderColor)
@@ -288,7 +273,7 @@ class ClickGUI : GuiScreen() {
 
         // handle the advanced gui first
         searchTextField?.mouseClicked(mouseX, mouseY, mouseButton)
-        
+
         if (advancedMenu?.mouseClicked(scaledMouseX, scaledMouseY, mouseButton) == true){
             // Update the elements of the corresponding module button
             val module = advancedMenu?.module ?: return
