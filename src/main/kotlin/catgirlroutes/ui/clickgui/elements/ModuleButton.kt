@@ -48,51 +48,46 @@ class ModuleButton(val module: Module, val panel: Panel) {
      * @see catgirlroutes.module.settings.Setting.shouldBeVisible
      */
     fun updateElements() {
-        var position = -1 // This looks weird, but it starts at -1 because it gets incremented before being used.
-        var keybindElem: Element<*>? = null
-        var showInList: BooleanSetting? = null
-        for (setting in module.settings) {
-            /** Don't show hidden settings */
-            if (setting.visibility.visibleInClickGui && setting.shouldBeVisible) run addElement@{
-                if (setting is KeyBindSetting) {
-                    keybindElem = ElementKeyBind(this, setting)
-                    return@addElement
-                }
-                if (setting.name.equals("Show in array list", true) && setting is BooleanSetting) {
-                    showInList = setting
-                    return@addElement
-                }
-                if (menuElements.any { it.setting === setting }) return@addElement
-                position++
-                val newElement = when (setting) {
-                    is BooleanSetting ->    ElementCheckBox(this, setting)
-                    is NumberSetting ->     ElementSlider(this, setting)
-                    is SelectorSetting ->   ElementStringSelector(this, setting)
-                    is tSelectorSetting ->   ElementSelector(this, setting)
-                    is StringSetting ->     ElementTextField(this, setting)
-                    is ColorSetting ->      ElementColor(this, setting)
-                    is ActionSetting ->     ElementAction(this, setting)
-                    is DropdownSetting ->   ElementDropdown(this, setting)
-                    is HudSetting ->        ElementHud(this, setting)
-                    else ->                 ElementDummy(this, setting)
-                }
-                if (position >= 0 && position <= menuElements.size) {
-                    menuElements.add(position, newElement)
-                } else {
-                    menuElements.add(newElement)
-                }
-            } else {
-                menuElements.removeIf { it.setting === setting }
+        val newElements: ArrayList<Element<*>> = ArrayList()
+        var showInListSetting: BooleanSetting? = null
+        var moduleKeyBindElement: Element<*>? = null
+
+        module.settings.forEach { setting ->
+            if (!(setting.visibility.visibleInClickGui && setting.shouldBeVisible)) return@forEach
+
+            if (setting is BooleanSetting && setting.name.equals("Show in array list", true)) {
+                showInListSetting = setting
+                return@forEach
             }
+            if (setting is KeyBindSetting) {
+                if (setting.value === module.keybinding) {
+                    moduleKeyBindElement = ElementKeyBind(this, setting)
+                } else {
+                    newElements.add(ElementKeyBind(this, setting))
+                }
+                return@forEach
+            }
+
+            val element = when (setting) {
+                is BooleanSetting ->    ElementCheckBox(this, setting)
+                is NumberSetting ->     ElementSlider(this, setting)
+                is SelectorSetting ->   ElementStringSelector(this, setting)
+                is tSelectorSetting ->  ElementSelector(this, setting)
+                is StringSetting ->     ElementTextField(this, setting)
+                is ColorSetting ->      ElementColor(this, setting)
+                is ActionSetting ->     ElementAction(this, setting)
+                is DropdownSetting ->   ElementDropdown(this, setting)
+                is HudSetting ->        ElementHud(this, setting)
+                else ->                 ElementDummy(this, setting)
+            }
+            newElements.add(element)
         }
-        showInList?.let { s ->
-            menuElements.removeIf { it.setting === s || it.displayName.equals("Show in array list", true) }
-            menuElements.add(ElementCheckBox(this, s))
-        }
-        keybindElem?.let { kb ->
-            menuElements.removeIf { it.setting === (kb.setting) }
-            menuElements.add(kb)
-        }
+
+        showInListSetting?.let { newElements.add(ElementCheckBox(this, it)) }
+        moduleKeyBindElement?.let { newElements.add(it) }
+
+        menuElements.clear()
+        menuElements.addAll(newElements)
     }
 
     /**

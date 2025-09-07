@@ -25,6 +25,9 @@ class ElementBoolean(parent: ModuleButton, setting: BooleanSetting) :
     }
 
     override fun renderElement(): Double {
+        if (this.booleanElement.enabled != this.setting.enabled) {
+            this.booleanElement.update { enabled = setting.enabled }
+        }
         run {
             val oc = ColorUtil.outlineColor
             val hc = ColorUtil.clickGUIColor

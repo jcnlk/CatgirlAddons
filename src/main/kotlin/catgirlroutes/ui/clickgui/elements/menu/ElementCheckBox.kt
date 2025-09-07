@@ -34,11 +34,15 @@ class ElementCheckBox(parent: ModuleButton, setting: BooleanSetting) :
      * Handles mouse clicks for this element and returns true if an action was performed
 	 */
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int): Boolean {
-        if (mouseButton == 0 && isCheckHovered(mouseX, mouseY)) {
+        if (mouseButton == 0 && (isCheckHovered(mouseX, mouseY) || isElementHovered(mouseX, mouseY))) {
             setting.toggle()
             return true
         }
-        return super.mouseClicked(mouseX, mouseY, mouseButton)
+        return false
+    }
+
+    private fun isElementHovered(mouseX: Int, mouseY: Int): Boolean {
+        return mouseX >= xAbsolute && mouseX <= xAbsolute + width && mouseY >= yAbsolute && mouseY <= yAbsolute + height
     }
 
     /**

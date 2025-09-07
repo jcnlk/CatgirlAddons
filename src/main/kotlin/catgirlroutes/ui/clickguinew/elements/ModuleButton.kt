@@ -57,51 +57,46 @@ class ModuleButton(val module: Module, val window: Window) {
     }
 
     fun updateElements() {
-        var position = -1
+        val newElements: ArrayList<Element<*>> = ArrayList()
         var showInListSetting: BooleanSetting? = null
-        for (setting in module.settings) {
-            if ((setting.visibility.visibleInClickGui || setting.visibility.visibleInAdvanced) && setting.shouldBeVisible) run addElement@{
-                if (setting is BooleanSetting && setting.name.equals("Show in array list", true)) {
-                    showInListSetting = setting
-                    return@addElement
-                }
-                if (this.menuElements.any { it.setting === setting }) return@addElement
-                position++
-                val newElement = when (setting) {
-                    is BooleanSetting ->    ElementBoolean(this, setting)
-                    is NumberSetting ->     ElementSlider(this, setting)
-                    is SelectorSetting ->   ElementSelector(this, setting)
-                    is StringSetting ->     ElementTextField(this, setting)
-                    is ColorSetting ->      ElementColor(this, setting)
-                    is ActionSetting ->     ElementAction(this, setting)
-                    is KeyBindSetting ->    ElementKeyBind(this, setting)
-                    is DropdownSetting ->   ElementDropdown(this, setting)
-                    is HudSetting ->        ElementHud(this, setting)
-                    is OrderSetting ->      ElementOrder(this, setting)
-                    else -> return@addElement
-                }
-                try { // for now ig
-                    if (position >= 0 && position <= this.menuElements.size) {
-                        this.menuElements.add(position, newElement)
-                    } else {
-                        this.menuElements.add(newElement)
-                    }
-                } catch (e: IndexOutOfBoundsException) {
-                    this.menuElements.add(newElement)
-                }
-            } else {
-                this.menuElements.removeIf { it.setting === setting }
+        var moduleKeySetting: KeyBindSetting? = null
+
+        module.settings.forEach { setting ->
+            val visible = (setting.visibility.visibleInClickGui || setting.visibility.visibleInAdvanced) && setting.shouldBeVisible
+            if (!visible) return@forEach
+
+            if (setting is BooleanSetting && setting.name.equals("Show in array list", true)) {
+                showInListSetting = setting
+                return@forEach
             }
-        }
-        this.menuElements.last { it.setting is KeyBindSetting }
-            .let { element ->
-                this.keySetting = element.setting as KeyBindSetting
-                this.menuElements.remove(element)
+            if (setting is KeyBindSetting) {
+                if (setting.value === module.keybinding) {
+                    moduleKeySetting = setting
+                }
+                return@forEach
             }
-        showInListSetting?.let { captured ->
-            this.menuElements.removeIf { it.setting === captured || it.displayName.equals("Show in array list", true) }
-            this.menuElements.add(ElementBoolean(this, captured))
+
+            val element = when (setting) {
+                is BooleanSetting ->    ElementBoolean(this, setting)
+                is NumberSetting ->     ElementSlider(this, setting)
+                is SelectorSetting ->   ElementSelector(this, setting)
+                is StringSetting ->     ElementTextField(this, setting)
+                is ColorSetting ->      ElementColor(this, setting)
+                is ActionSetting ->     ElementAction(this, setting)
+                is DropdownSetting ->   ElementDropdown(this, setting)
+                is HudSetting ->        ElementHud(this, setting)
+                is OrderSetting ->      ElementOrder(this, setting)
+                else -> return@forEach
+            }
+            newElements.add(element)
         }
+
+        moduleKeySetting?.let { this.keySetting = it }
+
+        showInListSetting?.let { newElements.add(ElementBoolean(this, it)) }
+
+        this.menuElements.clear()
+        this.menuElements.addAll(newElements)
     }
 
     fun draw() : Double {

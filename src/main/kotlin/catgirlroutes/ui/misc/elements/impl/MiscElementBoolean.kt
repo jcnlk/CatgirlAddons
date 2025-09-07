@@ -28,8 +28,9 @@ class MiscElementBoolean(
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int): Boolean {
-        if (isHovered(mouseX, mouseY) && mouseButton == 0 && colourAnimation.start()) {
+        if (isHovered(mouseX, mouseY) && mouseButton == 0) {
             this.enabled = !this.enabled
+            colourAnimation.start(true)
             return true
         }
         return super.mouseClicked(mouseX, mouseY, mouseButton)
