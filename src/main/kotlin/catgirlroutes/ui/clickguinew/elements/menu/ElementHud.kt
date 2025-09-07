@@ -23,10 +23,17 @@ class ElementHud(parent: ModuleButton, setting: HudSetting) :
 
     override fun renderElement(): Double {
         if (height == -5.0) return super.renderElement()
-        this.booleanElement.update { // FIXME
-            outlineColour = ColorUtil.outlineColor
-            hoverColour = ColorUtil.clickGUIColor
-        }.draw(mouseXRel, mouseYRel)
+        run {
+            val oc = ColorUtil.outlineColor
+            val hc = ColorUtil.clickGUIColor
+            if (this.booleanElement.outlineColour != oc || this.booleanElement.hoverColour != hc) {
+                this.booleanElement.update {
+                    outlineColour = oc
+                    hoverColour = hc
+                }
+            }
+        }
+        this.booleanElement.draw(mouseXRel, mouseYRel)
         return super.renderElement()
     }
 

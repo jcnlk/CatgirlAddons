@@ -41,7 +41,7 @@ class ElementOrder(parent: ModuleButton, setting: OrderSetting) :
     private val optionButtons = mutableListOf<MiscElementButton>()
     private var draggedOption: MiscElementButton? = null
     private val optionsListWidth get() = if (options.isEmpty()) 0.0 else this.parent.width - maxWidth
-    private val optionElementHeight get() = 12.5 // todo make dynamic
+    private val optionElementHeight get() = DEFAULT_HEIGHT
 
     private val elementWidth: Double get() {
         val availableWidth = (maxWidth - (PADDING * (elementsPerRow - 1)) - 10.0) / elementsPerRow
@@ -110,9 +110,17 @@ class ElementOrder(parent: ModuleButton, setting: OrderSetting) :
         drawRoundedOutline(0.0, fontHeight + 3.0, maxWidth + optionsListWidth, elementsHeight + extraHeight + 10.0, 3.0, 1.0, ColorUtil.clickGUIColor)
 
         setting.updateAction?.let {
-            this.updateButton.update { // FIXME
-                outlineColour = ColorUtil.outlineColor
-                outlineHoverColour = ColorUtil.clickGUIColor
+            run {
+                val oc = ColorUtil.outlineColor
+                val hc = ColorUtil.clickGUIColor
+                if (updateButton.outlineColour != oc || updateButton.outlineHoverColour != hc) {
+                    updateButton.update {
+                        outlineColour = oc
+                        outlineHoverColour = hc
+                    }
+                }
+            }
+            this.updateButton.update {
                 x = 5.0
                 y = elementsHeight + DEFAULT_HEIGHT + 10.0
             }.draw(mouseXRel, mouseYRel)

@@ -883,7 +883,7 @@ object WorldRenderUtils {
         if (depthTest) GlStateManager.enableDepth() else GlStateManager.disableDepth()
         GlStateManager.depthMask(depthTest)
 
-        mc.fontRendererObj.drawString("$text§r", -mc.fontRendererObj.getStringWidth(text) / 2f, 0f, color.rgb, shadow)
+        mc.fontRendererObj.drawString("${text}\u00A7r", -mc.fontRendererObj.getStringWidth(text) / 2f, 0f, color.rgb, shadow)
 
         if (!depthTest) {
             GlStateManager.enableDepth()

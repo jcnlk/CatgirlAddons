@@ -54,7 +54,7 @@ abstract class MiscElement(open val style: MiscElementStyle) { // TODO fucking r
     var onClickAction: (Int) -> Unit = { _ -> }
     var onRenderAction: () -> Unit = {  }
     var onHoverAction: () -> Unit = {  }
-    var onKeyAction: (Char, Int) -> Unit = { _, _, -> }
+    var onKeyAction: (Char, Int) -> Unit = { _, _ -> }
 
     protected open fun render(mouseX: Int, mouseY: Int) {  }
     protected open fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int): Boolean = false
@@ -117,7 +117,7 @@ abstract class ElementDSL<T : MiscElement> {
     private var onClickAction: (Int) -> Unit = { _ -> }
     private var onRenderAction: () -> Unit = {  }
     private var onHoverAction: () -> Unit = {  }
-    private var onKeyAction: (Char, Int) -> Unit = { _, _, -> }
+    private var onKeyAction: (Char, Int) -> Unit = { _, _ -> }
 
     fun at(x: Number, y: Number) {
         this._x = x.toDouble()

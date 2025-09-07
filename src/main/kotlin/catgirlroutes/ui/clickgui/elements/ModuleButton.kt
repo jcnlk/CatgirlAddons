@@ -9,6 +9,7 @@ import catgirlroutes.ui.clickgui.Panel
 import catgirlroutes.ui.clickgui.advanced.AdvancedMenu
 import catgirlroutes.ui.clickgui.elements.menu.*
 import catgirlroutes.ui.clickgui.util.ColorUtil
+import catgirlroutes.ui.clickgui.util.ColorUtil.withAlpha
 import catgirlroutes.ui.clickgui.util.FontUtil
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.renderer.GlStateManager
@@ -48,11 +49,21 @@ class ModuleButton(val module: Module, val panel: Panel) {
      */
     fun updateElements() {
         var position = -1 // This looks weird, but it starts at -1 because it gets incremented before being used.
+        var keybindElem: Element<*>? = null
+        var showInList: BooleanSetting? = null
         for (setting in module.settings) {
             /** Don't show hidden settings */
             if (setting.visibility.visibleInClickGui && setting.shouldBeVisible) run addElement@{
-                position++
+                if (setting is KeyBindSetting) {
+                    keybindElem = ElementKeyBind(this, setting)
+                    return@addElement
+                }
+                if (setting.name.equals("Show in array list", true) && setting is BooleanSetting) {
+                    showInList = setting
+                    return@addElement
+                }
                 if (menuElements.any { it.setting === setting }) return@addElement
+                position++
                 val newElement = when (setting) {
                     is BooleanSetting ->    ElementCheckBox(this, setting)
                     is NumberSetting ->     ElementSlider(this, setting)
@@ -61,17 +72,26 @@ class ModuleButton(val module: Module, val panel: Panel) {
                     is StringSetting ->     ElementTextField(this, setting)
                     is ColorSetting ->      ElementColor(this, setting)
                     is ActionSetting ->     ElementAction(this, setting)
-                    is KeyBindSetting ->    ElementKeyBind(this, setting)
                     is DropdownSetting ->   ElementDropdown(this, setting)
                     is HudSetting ->        ElementHud(this, setting)
                     else ->                 ElementDummy(this, setting)
                 }
-                menuElements.add(position, newElement)
-            }else {
-                menuElements.removeIf {
-                    it.setting === setting
+                if (position >= 0 && position <= menuElements.size) {
+                    menuElements.add(position, newElement)
+                } else {
+                    menuElements.add(newElement)
                 }
+            } else {
+                menuElements.removeIf { it.setting === setting }
             }
+        }
+        showInList?.let { s ->
+            menuElements.removeIf { it.setting === s || it.displayName.equals("Show in array list", true) }
+            menuElements.add(ElementCheckBox(this, s))
+        }
+        keybindElem?.let { kb ->
+            menuElements.removeIf { it.setting === (kb.setting) }
+            menuElements.add(kb)
         }
     }
 
@@ -105,6 +125,11 @@ class ModuleButton(val module: Module, val panel: Panel) {
         /** Rendering the name in the middle */
         val displayName = module.name
         FontUtil.drawTotalCenteredStringWithShadow(displayName, width / 2.0, 1 + height / 2.0)
+
+        if (extended) {
+            val accent = ColorUtil.clickGUIColor.withAlpha(90).rgb
+            Gui.drawRect(0, height, width, height + 1, accent)
+        }
 
         /** Render the settings elements */
         var offs = height + 1

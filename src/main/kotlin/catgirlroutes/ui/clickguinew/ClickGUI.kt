@@ -23,7 +23,7 @@ import catgirlroutes.utils.render.HUDRenderUtils.scissor
 import org.lwjgl.input.Keyboard
 import java.awt.Color
 
-class ClickGUI : Screen() { // todo: module description // TODO RECODE
+class ClickGUI : Screen() { // TODO RECODE
 
     val guiWidth = 355.0
     val guiHeight = 260.0
@@ -47,6 +47,7 @@ class ClickGUI : Screen() { // todo: module description // TODO RECODE
     private val categoryButtons: ArrayList<MiscElementButton> = ArrayList()
     private var cachedCategoryButtons = false
     private var lastSearchText = ""
+    var hoveredModuleDesc: String = ""
 
     init {
         windows = ArrayList()
@@ -71,6 +72,7 @@ class ClickGUI : Screen() { // todo: module description // TODO RECODE
     }
 
     override fun draw() {
+        hoveredModuleDesc = ""
         var categoryOffset = 25.0
 
         if (ClickGui.showUsageInfo) renderUsage()
@@ -83,10 +85,17 @@ class ClickGUI : Screen() { // todo: module description // TODO RECODE
         val titleWidth = FontUtil.getStringWidth(ClickGui.guiName)
         FontUtil.drawStringWithShadow(ClickGui.guiName, x + categoryWidth / 2.0 - titleWidth / 2.0, y + 6.0)
 
-        this.searchBar.update { // FIXME
-            outlineColour = ColorUtil.outlineColor
-            outlineHoverColour = ColorUtil.clickGUIColor
-        }.draw(mouseX, mouseY)
+        run {
+            val oc = ColorUtil.outlineColor
+            val hc = ColorUtil.clickGUIColor
+            if (this.searchBar.outlineColour != oc || this.searchBar.outlineHoverColour != hc) {
+                this.searchBar.update {
+                    outlineColour = oc
+                    outlineHoverColour = hc
+                }
+            }
+        }
+        this.searchBar.draw(mouseX, mouseY)
 
         if (!cachedCategoryButtons || lastSearchText != this.searchBar.text) {
             categoryButtons.clear()
@@ -140,6 +149,24 @@ class ClickGUI : Screen() { // todo: module description // TODO RECODE
             if (window.category != Category.SETTINGS) categoryOffset += 14.0
         }
         resetScissor()
+
+        if (hoveredModuleDesc.isNotBlank() && !selectedWindow.inModule) {
+            val maxWidth = 220.0
+            val lines = FontUtil.wrapText(hoveredModuleDesc, maxWidth)
+            val lineHeight = FontUtil.getFontHeight(1.0).toDouble()
+            val boxWidth = (lines.maxOfOrNull { FontUtil.getStringWidthDouble(it) } ?: 0.0) + 8.0
+            val boxHeight = lines.size * lineHeight + 6.0
+
+            var bx = mouseX + 8.0
+            var by = mouseY + 8.0
+            if (bx + boxWidth > sr.scaledWidth_double) bx = sr.scaledWidth_double - boxWidth - 2.0
+            if (by + boxHeight > sr.scaledHeight_double) by = sr.scaledHeight_double - boxHeight - 2.0
+
+            drawRoundedBorderedRect(bx, by, boxWidth, boxHeight, 3.0, 1.0, ColorUtil.bgColor, ColorUtil.outlineColor)
+            lines.forEachIndexed { i, line ->
+                FontUtil.drawString(line, bx + 4.0, by + 3.0 + i * lineHeight)
+            }
+        }
     }
 
     override fun onScroll(amount: Int) {

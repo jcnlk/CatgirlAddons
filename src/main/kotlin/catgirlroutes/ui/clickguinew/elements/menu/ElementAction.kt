@@ -19,10 +19,17 @@ class ElementAction(parent: ModuleButton, setting: ActionSetting) :
     }
 
     override fun renderElement(): Double {
-        this.actionButton.update { // FIXME
-            outlineColour = ColorUtil.outlineColor
-            outlineHoverColour = ColorUtil.clickGUIColor
-        }.draw(mouseXRel, mouseYRel)
+        run {
+            val oc = ColorUtil.outlineColor
+            val hc = ColorUtil.clickGUIColor
+            if (this.actionButton.outlineColour != oc || this.actionButton.outlineHoverColour != hc) {
+                this.actionButton.update {
+                    outlineColour = oc
+                    outlineHoverColour = hc
+                }
+            }
+        }
+        this.actionButton.draw(mouseXRel, mouseYRel)
         return super.renderElement()
     }
 

@@ -35,10 +35,17 @@ class ElementTextField(parent: ModuleButton, setting: StringSetting) :
             setting.text = this.textField.text
             this.lastKnownText = this.textField.text
         }
-        this.textField.update { // FIXME
-            outlineColour = ColorUtil.outlineColor
-            outlineHoverColour = ColorUtil.clickGUIColor
-        }.draw(mouseXRel, mouseYRel)
+        run {
+            val oc = ColorUtil.outlineColor
+            val hc = ColorUtil.clickGUIColor
+            if (this.textField.outlineColour != oc || this.textField.outlineHoverColour != hc) {
+                this.textField.update {
+                    outlineColour = oc
+                    outlineHoverColour = hc
+                }
+            }
+        }
+        this.textField.draw(mouseXRel, mouseYRel)
         return super.renderElement()
     }
 

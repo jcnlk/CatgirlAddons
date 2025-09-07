@@ -82,20 +82,35 @@ class Panel(
         GlStateManager.translate(x.toFloat(), y.toFloat(), 0f)
 
         // Set up the Scissor Box
-        HUDRenderUtils.setUpScissorAbsolute(x-2, y + height, x + width+1, y + height + 4000)
+        HUDRenderUtils.setUpScissorAbsolute(x - 2, y + height, x + width + 1, y + height + 4000)
 
         /** Render the module buttons and the Settings elements */
         var startY = height
         if (extended && moduleButtons.isNotEmpty()) {
-            startY -= scrollOffset
+            var contentHeight = 0
             val visibleButtons = getVisibleModuleButtons()
-            for (moduleButton in visibleButtons) {
-                // Render the module Button
-                moduleButton.y = startY
+            visibleButtons.forEach { mb ->
+                var h = mb.height + 1
+                if (mb.extended && mb.menuElements.isNotEmpty()) {
+                    mb.menuElements.forEach { el ->
+                        el.update()
+                        h += el.height
+                    }
+                }
+                contentHeight += h
+            }
 
+            Gui.drawRect(0, height, width, height + contentHeight + 5, ColorUtil.dropDownColor)
+            if (ClickGui.design.isSelected("New")) {
+                Gui.drawRect(0, height, 2, height + contentHeight + 5, ColorUtil.outlineColor.rgb)
+            }
+
+            startY -= scrollOffset
+            visibleButtons.forEach { moduleButton ->
+                moduleButton.y = startY
                 startY += moduleButton.drawScreen(mouseX, mouseY, partialTicks)
             }
-            length = startY+5
+            length = startY + 5
         }
 
         // Resetting the scissor
@@ -107,8 +122,8 @@ class Panel(
 
         // Render decor
         if (ClickGui.design.isSelected("New")) {
-            Gui.drawRect(0, 0,  2, height, ColorUtil.outlineColor.rgb)
-            Gui.drawRect(0, startY,  2, startY+5, ColorUtil.outlineColor.rgb)
+            Gui.drawRect(0, 0, 2, height, ColorUtil.outlineColor.rgb)
+            Gui.drawRect(0, startY, 2, startY + 5, ColorUtil.outlineColor.rgb)
             FontUtil.drawStringWithShadow(title, 4.0, height / 2.0 - FontUtil.fontHeight / 2.0)
         } else if (ClickGui.design.isSelected("JellyLike")) {
             Gui.drawRect(4, 2, 5, height - 2, ColorUtil.jellyPanelColor)

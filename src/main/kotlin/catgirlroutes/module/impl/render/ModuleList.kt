@@ -14,8 +14,6 @@ import catgirlroutes.utils.render.HUDRenderUtils.sr
 import net.minecraft.client.renderer.GlStateManager
 import java.awt.Color
 
-//TODO: Maybe box idk. I would personally not. Maybe add a switch to modules for showing in list.
-
 object ModuleList : Module(
     "Array List",
     Category.RENDER,
@@ -23,6 +21,7 @@ object ModuleList : Module(
 ) {
     private val textColour by ColorSetting("Text colour", Color.PINK, false, collapsible = false)
     private val renderLine by BooleanSetting("Render line", "Renders a line on the side.")
+    private val renderBackground by BooleanSetting("Render background", "Renders a background box behind each entry.")
     val hud by HudSetting {
         visibleIf { activeModuleList.isNotEmpty() }
         render {
@@ -38,7 +37,9 @@ object ModuleList : Module(
                     val stickX = if (isLeft) 0.0 else width
 
                     GlStateManager.pushMatrix()
-                    renderRect(xOffset - 2.0, i * 11.0 - 2.0, w + 2.0, fontHeight + 2.0, Color(0, 0, 0, 128))
+                    if (renderBackground) {
+                        renderRect(xOffset - 2.0, i * 11.0 - 2.0, w + 2.0, fontHeight + 2.0, Color(0, 0, 0, 128))
+                    }
                     drawStringWithShadow(module, xOffset, i * (fontHeight + 2.0), textColour.rgb)
                     if (renderLine) renderRect(stickX, i * 11.0 - 2.0, 2.0, fontHeight + 2.0, textColour)
                     GlStateManager.popMatrix()
@@ -48,6 +49,6 @@ object ModuleList : Module(
     
     private val activeModuleList: List<String>
         get() = modules.mapNotNull {
-            if (it.enabled && it.name != this.name) it.name else null
+            if (it.enabled && it.name != this.name && it.showInArrayList) it.name else null
         }
 }

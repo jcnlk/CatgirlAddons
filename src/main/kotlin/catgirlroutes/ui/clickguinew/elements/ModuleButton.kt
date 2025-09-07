@@ -58,10 +58,15 @@ class ModuleButton(val module: Module, val window: Window) {
 
     fun updateElements() {
         var position = -1
+        var showInListSetting: BooleanSetting? = null
         for (setting in module.settings) {
             if ((setting.visibility.visibleInClickGui || setting.visibility.visibleInAdvanced) && setting.shouldBeVisible) run addElement@{
-                position++
+                if (setting is BooleanSetting && setting.name.equals("Show in array list", true)) {
+                    showInListSetting = setting
+                    return@addElement
+                }
                 if (this.menuElements.any { it.setting === setting }) return@addElement
+                position++
                 val newElement = when (setting) {
                     is BooleanSetting ->    ElementBoolean(this, setting)
                     is NumberSetting ->     ElementSlider(this, setting)
@@ -76,20 +81,27 @@ class ModuleButton(val module: Module, val window: Window) {
                     else -> return@addElement
                 }
                 try { // for now ig
-                    this.menuElements.add(position, newElement)
+                    if (position >= 0 && position <= this.menuElements.size) {
+                        this.menuElements.add(position, newElement)
+                    } else {
+                        this.menuElements.add(newElement)
+                    }
                 } catch (e: IndexOutOfBoundsException) {
-//                    this.menuElements.add(newElement)
+                    this.menuElements.add(newElement)
                 }
             } else {
                 this.menuElements.removeIf { it.setting === setting }
             }
         }
-//        this.keySetting = this.menuElements.removeAt(this.menuElements.lastIndex).setting as KeyBindSetting
         this.menuElements.last { it.setting is KeyBindSetting }
             .let { element ->
                 this.keySetting = element.setting as KeyBindSetting
                 this.menuElements.remove(element)
             }
+        showInListSetting?.let { captured ->
+            this.menuElements.removeIf { it.setting === captured || it.displayName.equals("Show in array list", true) }
+            this.menuElements.add(ElementBoolean(this, captured))
+        }
     }
 
     fun draw() : Double {
@@ -113,6 +125,14 @@ class ModuleButton(val module: Module, val window: Window) {
             else "NONE"
             FontUtil.drawString("[${keyName}]", this.width - 25.5 - FontUtil.getStringWidth("[${keyName}]"), 2 + fontHeight / 2.0)
 
+            if (isHovered && this.module.description.isNotBlank()) {
+                this.window.clickGui.run {
+                    if (!selectedWindow.inModule) {
+                        hoveredModuleDesc = module.description
+                    }
+                }
+            }
+
             when (this.module.tag) {
                 Module.TagType.HARAM -> drawTexturedRect(haramIcon, FontUtil.getStringWidth(this.module.name) + 15.0, 1.5, 17.0, 17.0)
                 Module.TagType.WHIP -> drawTexturedRect(whipIcon, FontUtil.getStringWidth(this.module.name) + 15.0, 1.5, 18.0, 18.0)
@@ -125,7 +145,11 @@ class ModuleButton(val module: Module, val window: Window) {
         if (this.extended) {
             this.scrollOffset = this.scrollAnimation.get(this.scrollOffset, this.scrollTarget)
 
-            var drawY = this.scrollOffset
+            val titleY = this.scrollOffset
+            FontUtil.drawString(module.name, 6.0, titleY, ColorUtil.clickGUIColor.rgb)
+            catgirlroutes.utils.render.HUDRenderUtils.renderRect(0.0, titleY + fontHeight + 2.0, this.width, 1.0, ColorUtil.outlineColor)
+
+            var drawY = titleY + fontHeight + 8.0
             this.menuElements.forEach {
                 it.y = drawY
                 it.update()
@@ -138,7 +162,10 @@ class ModuleButton(val module: Module, val window: Window) {
 
     fun scroll(amount: Int): Boolean {
         if (!this.extended || !this.window.isHovered()) return false
-        val h = this.elementsHeight + 15.0
+        val chipH = 12.0
+        val spacing = 3.0
+        val headerH = fontHeight + 8.0
+        val h = this.elementsHeight + 15.0 + headerH
         if (h < this.window.height) {
             if (this.scrollTarget != 0.0) {
                 this.scrollTarget = 0.0
@@ -160,6 +187,23 @@ class ModuleButton(val module: Module, val window: Window) {
             this.listeningKey = false
             return true
         }
+        if (this.extended) {
+            val chipPadding = 5.0
+            val chipTextW = FontUtil.getStringWidthDouble(module.name)
+            val chipW = (chipTextW + chipPadding * 2).coerceAtMost(this.width * 0.8)
+            val chipH = 12.0
+            val chipXAbs = this.window.x + this.width - chipW - 6.0
+            val chipYAbs = this.yAbsolute + this.scrollOffset
+            val toggleXAbs = chipXAbs - TOGGLE_W - 6.0
+            val toggleYAbs = chipYAbs + (chipH - TOGGLE_H) / 2.0
+            val mx = mouseX.toDouble()
+            val my = mouseY.toDouble()
+            if (mx >= toggleXAbs && mx <= toggleXAbs + TOGGLE_W && my >= toggleYAbs && my <= toggleYAbs + TOGGLE_H) {
+                this.module.showInArrayList = !this.module.showInArrayList
+                return true
+            }
+        }
+
         return when {
             isButtonHovered() && (!this.window.inModule) -> when (mouseButton) {
                 0 -> {
@@ -258,5 +302,7 @@ class ModuleButton(val module: Module, val window: Window) {
 
     companion object {
         val dotsIcon = ResourceLocation(RESOURCE_DOMAIN, "dots.png")
+        private const val TOGGLE_W = 12.0
+        private const val TOGGLE_H = 8.0
     }
 }

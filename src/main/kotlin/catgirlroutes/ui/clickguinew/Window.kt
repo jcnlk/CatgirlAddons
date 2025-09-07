@@ -46,7 +46,7 @@ class Window(
         this.scrollOffset = this.scrollAnimation.get(this.scrollOffset, this.scrollTarget)
 
         var drawY = this.scrollOffset
-        this.moduleButtons.filtered().reversed().forEach {
+        this.moduleButtons.filtered().forEach {
             it.x = 0.0
             it.y = drawY
             drawY += it.draw()

@@ -24,10 +24,17 @@ class ElementKeyBind(parent: ModuleButton, setting: KeyBindSetting) :
 
     override fun renderElement(): Double {
         FontUtil.drawString(displayName, 0.0, 1.0)
-        this.keyBind.update { // FIXME
-            colour = ColorUtil.clickGUIColor
-            outlineColour = ColorUtil.outlineColor
-        }.draw(mouseXRel, mouseYRel)
+        run {
+            val c = ColorUtil.clickGUIColor
+            val oc = ColorUtil.outlineColor
+            if (this.keyBind.colour != c || this.keyBind.outlineColour != oc) {
+                this.keyBind.update {
+                    colour = c
+                    outlineColour = oc
+                }
+            }
+        }
+        this.keyBind.draw(mouseXRel, mouseYRel)
         return super.renderElement()
     }
 

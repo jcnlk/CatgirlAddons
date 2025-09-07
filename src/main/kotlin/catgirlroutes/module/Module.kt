@@ -134,12 +134,22 @@ abstract class Module(
 
     val hudElements: MutableList<HudElement> = mutableListOf()
 
+    private val showInArrayListSetting = catgirlroutes.module.settings.impl.BooleanSetting(
+        "Show in array list",
+        true,
+        "Shows this module in the Array List HUD."
+    )
+    var showInArrayList: Boolean
+        get() = showInArrayListSetting.value
+        set(value) { showInArrayListSetting.value = value }
+
     init {
         this.name = name
         this.category = category
         this.settings = settings
         this.description = description
         this.tag = tag
+        this.addSettings(showInArrayListSetting)
     }
 
     /**
@@ -244,7 +254,7 @@ abstract class Module(
     open fun onKeyBind() {
         this.toggle()
         if (ClickGui.notifications) Notifications.send("${if (enabled) "Enabled" else "Disabled"} $name", "", icon = if (enabled) "check.png" else "x.png")
-        else ChatUtils.modMessage("$name ${if (enabled) "§aenabled" else "§cdisabled"}.")
+        else ChatUtils.modMessage("$name ${if (enabled) "\u00A7aenabled" else "\u00A7cdisabled"}.")
     }
 
     /**
