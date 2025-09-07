@@ -5,3 +5,4 @@ build/
 !.gitignore
 !.gitattributes
 !.github/workflows
+assets/

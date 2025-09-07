@@ -5,9 +5,9 @@ plugins {
     java
     id("gg.essential.loom") version "0.10.0.+"
     id("dev.architectury.architectury-pack200") version "0.1.3"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-    kotlin("jvm") version "2.0.0-Beta1"
-    kotlin("plugin.serialization") version "2.0.0-Beta1"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
+    kotlin("jvm") version "1.9.22"
+    kotlin("plugin.serialization") version "1.9.22"
     id("net.kyori.blossom") version "1.3.1"
 }
 
@@ -68,6 +68,19 @@ tasks.compileJava {
     dependsOn(tasks.processResources)
 }
 
+tasks.withType<net.fabricmc.loom.task.RunGameTask>().configureEach {
+    javaLauncher.set(javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    })
+    val hasExternalJdwp = (System.getenv("JAVA_TOOL_OPTIONS") ?: System.getProperty("JAVA_TOOL_OPTIONS") ?: "")
+        .contains("agentlib:jdwp")
+    val extraArgs = mutableListOf<String>("-noverify")
+    if (!hasExternalJdwp) {
+        extraArgs += "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
+    }
+    jvmArgs(extraArgs)
+}
+
 sourceSets.main {
     output.setResourcesDir(sourceSets.main.flatMap { it.java.classesDirectory })
     java.srcDir(layout.projectDirectory.dir("src/main/kotlin"))
@@ -80,8 +93,15 @@ repositories {
     mavenCentral()
     maven("https://repo.spongepowered.org/maven/")
     maven("https://jitpack.io/")
-    // If you don't want to log in with your real minecraft account, remove this line
     maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.jetbrains" && requested.name == "annotations") {
+            useVersion("13.0")
+        }
+    }
 }
 
 val shadowImpl: Configuration by configurations.creating {
@@ -145,7 +165,6 @@ tasks.processResources {
 
     rename("accesstransformer.cfg", "META-INF/${modID}_at.cfg")
 }
-
 
 val remapJar by tasks.named<net.fabricmc.loom.task.RemapJarTask>("remapJar") {
     archiveClassifier.set("")
