@@ -49,6 +49,7 @@ object CustomMainMenu: Screen(false) { // todo add more shit
         add("Singleplayer") { mc.displayGuiScreen(GuiSelectWorld(mc.currentScreen)) }
         add("Multiplayer") { mc.displayGuiScreen(GuiMultiplayer(mc.currentScreen)) }
         add("Options") { mc.displayGuiScreen(GuiOptions(mc.currentScreen, mc.gameSettings)) }
+        add("Last world") { joinLastSingleplayerWorld() }
         add("Hypixel") {
             try {
                 FMLClientHandler.instance().setupServerList()
@@ -58,7 +59,6 @@ object CustomMainMenu: Screen(false) { // todo add more shit
                 e.printStackTrace()
             }
         }
-        add("Last world") { joinLastSingleplayerWorld() }
 
         if (PhoenixAuth.addToMainMenu) {
             add("Phoenix") {

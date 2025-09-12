@@ -9,7 +9,7 @@ import catgirlroutes.ui.hud.EditHudGUI
 @SettingsCategory
 object EditHud : Module(
     "Edit Hud",
-    Category.RENDER,
+    Category.SETTINGS,
     "Opens the edit hud gui."
 ) {
     /**

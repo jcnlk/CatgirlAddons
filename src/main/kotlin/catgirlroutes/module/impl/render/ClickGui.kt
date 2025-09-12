@@ -28,7 +28,7 @@ import java.time.format.DateTimeFormatter
 object ClickGui: Module(
     "ClickGUI",
     Keyboard.KEY_RSHIFT,
-    category = Category.RENDER,
+    category = Category.SETTINGS,
     description = "Appearance settings for the click gui. \n" +
             "You can set a custom chat prefix with formatting here. For formatting use & or the paragrph symbol followed by a modifier. " +
             "A benefit of using the paragraph symbol is, that you can directly see how it will look in the text field, but you wont be able to see the formatting. \n" +
