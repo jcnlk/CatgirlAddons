@@ -36,6 +36,8 @@ class ModuleButton(val module: Module, val panel: Panel) {
     val yAbsolute: Int
         get() = y + panel.y
 
+    private var hoverStartTime: Long? = null
+
     init {
         /** Register the corresponding gui element for all non-hidden settings in the module */
         updateElements()
@@ -120,6 +122,19 @@ class ModuleButton(val module: Module, val panel: Panel) {
         /** Rendering the name in the middle */
         val displayName = module.name
         FontUtil.drawTotalCenteredStringWithShadow(displayName, width / 2.0, 1 + height / 2.0)
+
+        if (!extended && isButtonHovered(mouseX, mouseY)) {
+            val desc = module.description
+            if (!desc.isNullOrBlank()) {
+                val now = System.currentTimeMillis()
+                if (hoverStartTime == null) hoverStartTime = now
+                if (now - (hoverStartTime ?: now) >= 1000) {
+                    panel.clickgui.requestTooltip(FontUtil.wrapText(desc, 220.0))
+                }
+            }
+        } else {
+            hoverStartTime = null
+        }
 
         if (extended) {
             val accent = ColorUtil.clickGUIColor.withAlpha(90).rgb

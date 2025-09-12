@@ -53,6 +53,7 @@ class ClickGUI : GuiScreen() {
     var advancedMenu: AdvancedMenu? = null
     private var searchTextField: GuiTextField? = null
     var searchText = ""
+    private var pendingTooltip: List<String>? = null
 
     init {
         FontUtil.setupFontUtils()
@@ -102,10 +103,19 @@ class ClickGUI : GuiScreen() {
             advancedMenu?.drawScreen(scaledMouseX, scaledMouseY, partialTicks)
         }
 
+        pendingTooltip?.let {
+            drawHoveringText(it, scaledMouseX, scaledMouseY)
+            pendingTooltip = null
+        }
+
         /** Might be needed to use gui buttons */
         super.drawScreen(scaledMouseX, scaledMouseY, partialTicks)
 
         mc.gameSettings.guiScale = prevScale
+    }
+
+    fun requestTooltip(lines: List<String>) {
+        pendingTooltip = lines
     }
 
     /**

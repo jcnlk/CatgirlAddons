@@ -33,6 +33,7 @@ abstract class Element<S: Setting<*>>(
     var displayName: String = setting.name
     var extended = false
     var listening = false
+    private var hoverStartTime: Long? = null
 
     /** Absolute position of the panel on the screen. */
     val xAbsolute: Int
@@ -109,6 +110,22 @@ abstract class Element<S: Setting<*>>(
 
         // Render the element.
         val elementLength = renderElement(mouseX, mouseY, partialTicks)
+
+        if (parent.extended && setting.description != null) {
+            val isHover = isHovered(mouseX, mouseY)
+            val now = System.currentTimeMillis()
+            if (isHover) {
+                if (hoverStartTime == null) hoverStartTime = now
+                if (now - (hoverStartTime ?: now) >= 1000) {
+                    val lines = FontUtil.wrapText(setting.description!!, 150.0)
+                    clickgui.requestTooltip(lines)
+                }
+            } else {
+                hoverStartTime = null
+            }
+        } else {
+            hoverStartTime = null
+        }
 
         GlStateManager.popMatrix()
         return elementLength
