@@ -7,11 +7,17 @@ import catgirlroutes.module.Category
 import catgirlroutes.module.Module
 import catgirlroutes.module.settings.AlwaysActive
 import catgirlroutes.module.settings.Setting.Companion.withDependency
+import catgirlroutes.module.settings.Setting.Companion.withInputTransform
 import catgirlroutes.module.settings.SettingsCategory
 import catgirlroutes.module.settings.Visibility
 import catgirlroutes.module.settings.impl.*
 import org.lwjgl.input.Keyboard
+import org.lwjgl.opengl.Display
 import java.awt.Color
+import net.minecraft.client.Minecraft
+import catgirlroutes.CatgirlRoutes
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 /**
  * Settings for the CLick Gui
@@ -38,7 +44,11 @@ object ClickGui: Module(
 
     val customMenu by BooleanSetting("Custom main menu")
     val customMenuPic by BooleanSetting("Custom main menu picture", false, "Use a custom picture instead of the default one.").withDependency { customMenu }
-//    val windowName by StringSetting("Window name", "CatgirlAddons", description = "Sets window name to a custom one if not empty.")
+    val windowName by StringSetting("Window name", "", description = "Sets window name to a custom one if not empty. Supports {player}, {server}, {mod}, {version}, {time}, {fps}")
+        .withInputTransform { input, _ ->
+            pendingTitleUpdate = true
+            input
+        }
     val guiName by StringSetting("Gui name", "CatgirlAddons", 15, description = "Name that will be rendered in the gui.")
     val prefixStyle by SelectorSetting("Prefix style", "Long", arrayListOf("Long", "Short", "Custom"), "Chat prefix selection for mod messages.")
     val customPrefix by StringSetting("Custom prefix", "§0§l[§4§lCatgirlAddons§0§l]§r", 40,  description = "You can set a custom chat prefix that will be used when Custom is selected in the Prefix Style dropdown.").withDependency { this.prefixStyle.index == 2 }
@@ -115,6 +125,10 @@ object ClickGui: Module(
         advancedRelY.reset()
     }
 
+    private var originalWindowTitle: String? = null
+    @Volatile var pendingTitleUpdate: Boolean = false
+    private var lastAppliedTitle: String? = null
+
     /**
      * Overridden to prevent the chat message from being sent.
      */
@@ -131,5 +145,51 @@ object ClickGui: Module(
         display = if (this.clickGui.index == 0) clickGUINew else clickGUI
         super.onEnable()
         toggle()
+    }
+
+    override fun onInitialize() {
+        pendingTitleUpdate = true
+    }
+
+    fun buildWindowTitle(): String {
+        val tpl = windowName.trim()
+        return if (tpl.isBlank()) originalWindowTitle ?: runCatching { Display.getTitle() }.getOrNull() ?: CatgirlRoutes.MOD_NAME
+        else resolveWindowVariables(tpl)
+    }
+
+    private fun resolveWindowVariables(s: String): String {
+        val mc = CatgirlRoutes.mc
+        val player = mc.thePlayer?.displayNameString ?: mc.thePlayer?.name ?: "Player"
+        val server = when {
+            mc.isSingleplayer -> "Singleplayer"
+            mc.currentServerData != null -> mc.currentServerData.serverIP
+            else -> "Multiplayer"
+        }
+        val time = runCatching { LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")) }.getOrElse { "" }
+        val fps = runCatching { Minecraft.getDebugFPS() }.getOrElse { 0 }
+        return s
+            .replace("{player}", player, ignoreCase = true)
+            .replace("{server}", server ?: "", ignoreCase = true)
+            .replace("{mod}", CatgirlRoutes.MOD_NAME, ignoreCase = true)
+            .replace("{version}", CatgirlRoutes.MOD_VERSION, ignoreCase = true)
+            .replace("{time}", time, ignoreCase = true)
+            .replace("{fps}", fps.toString(), ignoreCase = true)
+    }
+
+    fun applyWindowTitleIfNeeded(force: Boolean = false) {
+        try {
+            if (originalWindowTitle == null) {
+                originalWindowTitle = runCatching { Display.getTitle() }.getOrNull()
+            }
+            val target = if (windowName.isNotBlank()) buildWindowTitle() else originalWindowTitle ?: runCatching { Display.getTitle() }.getOrNull() ?: CatgirlRoutes.MOD_NAME
+            if (force || lastAppliedTitle != target) {
+                Display.setTitle(target)
+                lastAppliedTitle = target
+            }
+        } catch (_: Throwable) {
+            // ignore
+        } finally {
+            pendingTitleUpdate = false
+        }
     }
 }

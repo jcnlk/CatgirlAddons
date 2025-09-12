@@ -33,15 +33,15 @@ object CustomHighlight : Module(
     fun onRender(event: RenderWorldLastEvent) {
         val entities = mc.theWorld.loadedEntityList
         entities.forEach{e ->
-                if (e == mc.thePlayer) return@forEach
-                val highlightMatch = highlightList.find { e.name.contains(it.tag, true)}
+            if (e == mc.thePlayer) return@forEach
+            val highlightMatch = highlightList.find { e.name.contains(it.tag, true)}
 
-                if (highlightMatch != null) {
-                    drawEntityBox(e, highlightMatch.color, highlightMatch.color, true, false, event.partialTicks, 4.0f)
-                    if (tracer) {
-                        drawTracer(e.positionVector, Color.PINK)
-                    }
+            if (highlightMatch != null) {
+                drawEntityBox(e, highlightMatch.color, highlightMatch.color, true, false, event.partialTicks, 4.0f)
+                if (tracer) {
+                    drawTracer(e.positionVector, Color.PINK)
                 }
+            }
         }
     }
 
@@ -58,7 +58,6 @@ object CustomHighlight : Module(
                 if (e.name == mc.thePlayer.name) return@forEach
                 createClickableText(getPrefix() + "Copy " + name, "Click to copy to clipboard!", "/hl schizophrenia ${name}")
                 createClickableText(getPrefix() + "Add " + name, "Click to add to the list!", "/hl add ${name}")
-
             }
         }
     }

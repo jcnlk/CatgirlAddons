@@ -71,10 +71,8 @@ object CustomScoreboard : Module(
         val bgW = screenRight - (bgX - 2.0)
         val bgH = fontHeight * (filteredScores.size + 1) + 4.0
 
-
         if (background) drawRoundedRect(bgX, bgY, bgW, bgH, cornerRadius, backgroundColour)
         if (outline) drawRoundedOutline(bgX, bgY, bgW, bgH, cornerRadius, outlineThickness, outlineColour)
-
 
         collection.forEachIndexed { i, score ->
             val scorePlayerTeam2 = scoreboard.getPlayersTeam(score.playerName)

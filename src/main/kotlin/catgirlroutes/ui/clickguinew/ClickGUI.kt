@@ -181,7 +181,12 @@ class ClickGUI : Screen() { // TODO RECODE
         categoryButtons.firstOrNull { it.onMouseClick(mouseX, mouseY, mouseButton) }?.let {
             selectedWindow.moduleButtons.forEach { moduleButton -> moduleButton.extended = false }
         }
-        windows.reversed().forEach { if (it.mouseClicked(mouseButton)) return }
+        windows.reversed().forEach {
+            if (it.mouseClicked(mouseButton)) {
+                this.searchBar.isFocused = false
+                return
+            }
+        }
     }
 
     override fun onMouseRelease(state: Int) {
@@ -189,8 +194,8 @@ class ClickGUI : Screen() { // TODO RECODE
     }
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {
-        if (this.searchBar.onKey(typedChar, keyCode)) return
         windows.reversed().forEach { if (it.keyTyped(typedChar, keyCode)) return }
+        if (this.searchBar.onKey(typedChar, keyCode)) return
         when (keyCode) {
             Keyboard.KEY_F -> if (isCtrlKeyDown()) {
                 this.searchBar.isFocused = true // keep existing text

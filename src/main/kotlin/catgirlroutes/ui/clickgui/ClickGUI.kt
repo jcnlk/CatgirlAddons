@@ -275,6 +275,8 @@ class ClickGUI : GuiScreen() {
         searchTextField?.mouseClicked(mouseX, mouseY, mouseButton)
 
         if (advancedMenu?.mouseClicked(scaledMouseX, scaledMouseY, mouseButton) == true){
+            // defocus search when interacting with advanced menu
+            searchTextField?.isFocused = false
             // Update the elements of the corresponding module button
             val module = advancedMenu?.module ?: return
             panels.find { it.category == module.category }?.moduleButtons?.find { it.module == module }?.updateElements()
@@ -284,7 +286,11 @@ class ClickGUI : GuiScreen() {
         /** Checking all panels for click action.
           * Reversed order is used to guarantee that the panel rendered on top will be handled first. */
         for (panel in panels.reversed()) {
-            if (panel.mouseClicked(scaledMouseX, scaledMouseY, mouseButton)) return
+            if (panel.mouseClicked(scaledMouseX, scaledMouseY, mouseButton)) {
+                // defocus search when interacting with any panel/element
+                searchTextField?.isFocused = false
+                return
+            }
         }
 
         try {
@@ -311,22 +317,24 @@ class ClickGUI : GuiScreen() {
     }
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {
-        if (searchTextField?.textboxKeyTyped(typedChar, keyCode) == true) return
-
-        /** If in an advanced menu only hande that */
+        /** If in an advanced menu handle that first */
         if (advancedMenu != null) {
             if (keyCode == Keyboard.KEY_ESCAPE && !advancedMenu!!.isListening()) {
                 advancedMenu = null
             }
-            advancedMenu?.keyTyped(typedChar,keyCode)
-            return
+            if (advancedMenu?.keyTyped(typedChar, keyCode) == true) return
         }
 
-        /** For key registration in the menu elements. Required for text fields.
-         * Reversed order to check the panel on top first! */
+        // Fast-path: deliver to any actively listening element
+        if (dispatchKeyToActiveElement(typedChar, keyCode)) return
+
+        /** For key registration in the menu elements. Check elements before search bar */
         for (panel in panels.reversed()) {
             if (panel.keyTyped(typedChar, keyCode)) return
         }
+
+        // Only route to search if no element consumed input
+        if (searchTextField?.textboxKeyTyped(typedChar, keyCode) == true) return
 
         /** Handle Ctrl+F for search focus (keep text) */
         if (keyCode == Keyboard.KEY_F && isCtrlKeyDown()) {
@@ -355,6 +363,22 @@ class ClickGUI : GuiScreen() {
         } catch (e2: IOException) {
             e2.printStackTrace()
         }
+    }
+
+    private fun dispatchKeyToActiveElement(typedChar: Char, keyCode: Int): Boolean {
+        for (panel in panels.reversed()) {
+            if (!panel.visible || !panel.extended) continue
+            // panels are not storing visible subset; check module buttons
+            for (mb in panel.getVisibleModuleButtons().reversed()) {
+                if (!mb.extended) continue
+                for (el in mb.menuElements.reversed()) {
+                    if (el.listening) {
+                        if (el.keyTyped(typedChar, keyCode)) return true
+                    }
+                }
+            }
+        }
+        return false
     }
 
     override fun initGui() {

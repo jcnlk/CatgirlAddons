@@ -195,7 +195,11 @@ class ModuleButton(val module: Module, val panel: Panel) {
                     if (menuElement.parent.module.name == "ClickGUI" && menuElement.displayName == "ClickGui") {
                         ClickGui.onEnable()
                     }
-                    updateElements()
+                    val needsUpdate = when (menuElement) {
+                        is ElementStringSelector, is ElementSelector<*>, is ElementCheckBox, is ElementDropdown -> true
+                        else -> false
+                    }
+                    if (needsUpdate) updateElements()
                     return true
                 }
             }

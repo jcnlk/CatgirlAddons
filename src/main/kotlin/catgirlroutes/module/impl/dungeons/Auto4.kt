@@ -142,8 +142,6 @@ object Auto4: Module(
             currentBlock = null
             drawSquare(63.5, 127.01, 35.5, 3.0, 3.0, Color.RED, phase = false)
         }
-
-
     }
 
     @SubscribeEvent
@@ -177,7 +175,6 @@ object Auto4: Module(
         val coords = aimCoords(currentBlock!!)
         val rotation = getYawAndPitch(coords.xCoord, coords.yCoord, coords.zCoord)
         if (aimSnap) snapTo(rotation.first, rotation.second)
-        //clickAt(rotation.first, rotation.second)
         sendPacket(C05PacketPlayerLook(rotation.first, rotation.second, mc.thePlayer.onGround))
         cancelNext = true
         airClick()

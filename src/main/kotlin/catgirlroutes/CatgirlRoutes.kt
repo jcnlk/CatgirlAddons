@@ -112,7 +112,10 @@ class CatgirlRoutes {
             mc.displayGuiScreen(display)
             display = null
         }
-        if (tickRamp % 20 == 0) {
+        if (ClickGui.pendingTitleUpdate) {
+            ClickGui.applyWindowTitleIfNeeded(force = true)
+        } else if (tickRamp % 20 == 0) {
+            ClickGui.applyWindowTitleIfNeeded(force = false)
             tickRamp = 0
         }
     }
