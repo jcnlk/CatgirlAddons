@@ -21,7 +21,6 @@ import net.minecraft.init.Blocks
 import net.minecraft.network.play.client.C02PacketUseEntity
 import net.minecraft.util.BlockPos
 
-
 val devCommands = Commodore("cgadev") {
     literal("relativecoords").runs {
         val block = mc.objectMouseOver?.blockPos ?: return@runs

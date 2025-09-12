@@ -21,6 +21,8 @@ import net.minecraft.client.gui.GuiSelectWorld
 import net.minecraft.client.multiplayer.ServerData
 import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.util.ResourceLocation
+import net.minecraft.world.storage.ISaveFormat
+import net.minecraft.world.storage.SaveFormatComparator
 import net.minecraftforge.fml.client.FMLClientHandler
 import java.awt.Color
 import java.awt.Desktop
@@ -36,26 +38,30 @@ object CustomMainMenu: Screen(false) { // todo add more shit
     private var catTexture: ResourceLocation? = null
 
     override fun onInit() {
-        buttons = mutableListOf(
-            button(10, 10, "Singleplayer") { mc.displayGuiScreen(GuiSelectWorld(mc.currentScreen)) },
-            button(10, 35, "Multiplayer") { mc.displayGuiScreen(GuiMultiplayer(mc.currentScreen)) },
-            button(10, 60, "Options") { mc.displayGuiScreen(GuiOptions(mc.currentScreen, mc.gameSettings)) },
-            button(10, 85, "Hypixel") { 
-                try {
-                    FMLClientHandler.instance().setupServerList()
-                    FMLClientHandler.instance().connectToServer(this, ServerData("Hypixel", "mc.hypixel.net:25565", false))
-                } catch (e: Exception) {
-                    println("Error connecting to Hypixel: ${e.message}")
-                    e.printStackTrace()
-                }
-            },
-            button(10, this@CustomMainMenu.height - 30, "Quit") { mc.shutdown() },
-            button(this@CustomMainMenu.width - 210, this@CustomMainMenu.height - 30, "Open Github") { Desktop.getDesktop().browse(URI("https://github.com/WompWatr/CatgirlAddons")) },
-            button(this@CustomMainMenu.width - 210, this@CustomMainMenu.height - 55, "Discord Server") { Desktop.getDesktop().browse(URI("https://discord.gg/jK4AXeVK8u")) },
-            button(this@CustomMainMenu.width - 210, this@CustomMainMenu.height - 80, "Random cat picture") { downloadCatImage { catTexture = it } }
-        )
+        val list = mutableListOf<MiscElementButton>()
+        var nextY = 10
+
+        fun add(title: String, action: () -> Unit) {
+            list.add(button(10, nextY, title, action))
+            nextY += 25
+        }
+
+        add("Singleplayer") { mc.displayGuiScreen(GuiSelectWorld(mc.currentScreen)) }
+        add("Multiplayer") { mc.displayGuiScreen(GuiMultiplayer(mc.currentScreen)) }
+        add("Options") { mc.displayGuiScreen(GuiOptions(mc.currentScreen, mc.gameSettings)) }
+        add("Hypixel") {
+            try {
+                FMLClientHandler.instance().setupServerList()
+                FMLClientHandler.instance().connectToServer(this, ServerData("Hypixel", "mc.hypixel.net:25565", false))
+            } catch (e: Exception) {
+                println("Error connecting to Hypixel: ${e.message}")
+                e.printStackTrace()
+            }
+        }
+        add("Last world") { joinLastSingleplayerWorld() }
+
         if (PhoenixAuth.addToMainMenu) {
-            (buttons as MutableList).add(4, button(10, 110, "Phoenix") {
+            add("Phoenix") {
                 try {
                     FMLClientHandler.instance().setupServerList()
                     FMLClientHandler.instance().connectToServer(this, ServerData("Phoenix", PhoenixAuth.phoenixProxy, false))
@@ -64,8 +70,24 @@ object CustomMainMenu: Screen(false) { // todo add more shit
                     println("Phoenix proxy value: '${PhoenixAuth.phoenixProxy}'")
                     e.printStackTrace()
                 }
-            })
+            }
         }
+
+        list.add(button(10, this@CustomMainMenu.height - 30, "Quit") { mc.shutdown() })
+
+        list.add(button(this@CustomMainMenu.width - 210, this@CustomMainMenu.height - 30, "Open Github") {
+            try {
+                Desktop.getDesktop().browse(URI("https://github.com/jcnlk/CatgirlAddons"))
+            } catch (e: Exception) {
+                println("Failed to open GitHub: ${e.message}")
+                e.printStackTrace()
+            }
+        })
+        list.add(button(this@CustomMainMenu.width - 210, this@CustomMainMenu.height - 55, "Random cat picture") {
+            downloadCatImage { catTexture = it }
+        })
+
+        buttons = list
     }
 
     override fun draw() {
@@ -129,6 +151,23 @@ object CustomMainMenu: Screen(false) { // todo add more shit
             println("Failed to load custom menu background: ${e.message}")
             e.printStackTrace()
             customBackgroundTexture = null
+        }
+    }
+
+    private fun joinLastSingleplayerWorld() {
+        try {
+            val saveLoader: ISaveFormat = mc.saveLoader
+            val saves: List<SaveFormatComparator> = saveLoader.getSaveList()
+            if (saves.isEmpty()) {
+                println("No singleplayer worlds found")
+                return
+            }
+            val last = saves.maxByOrNull { it.lastTimePlayed } ?: saves.first()
+            mc.displayGuiScreen(null)
+            mc.launchIntegratedServer(last.fileName, last.displayName, null)
+        } catch (e: Exception) {
+            println("Failed to join last singleplayer world: ${e.message}")
+            e.printStackTrace()
         }
     }
 }
