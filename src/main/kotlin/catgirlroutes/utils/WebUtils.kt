@@ -26,33 +26,7 @@ suspend fun hasBonusPaulScore(): Boolean = withTimeoutOrNull(5000) {
     } else false
 } == true
 
-suspend fun sendDataToServer(body: String, url: String = "https://arasfjoiadjf.p-e.kr/cga/users" ): String = withTimeoutOrNull(5000) { // arasfjoiadjf.p-e.kr
-    return@withTimeoutOrNull try {
-        val connection = withContext(Dispatchers.IO) {
-            URL(url).openConnection()
-        } as HttpURLConnection
-        connection.requestMethod = "POST"
-        connection.doOutput = true
-        connection.setRequestProperty("Content-Type", "application/json")
-
-        val writer = OutputStreamWriter(connection.outputStream)
-        withContext(Dispatchers.IO) {
-            writer.write(body)
-        }
-        withContext(Dispatchers.IO) {
-            writer.flush()
-        }
-
-        val responseCode = connection.responseCode
-        val inputStream = if (responseCode in 200..299) connection.inputStream else connection.errorStream
-        val response = inputStream.bufferedReader().use { it.readText() }
-        connection.disconnect()
-
-        response
-    } catch (_: Exception) { "" }
-} ?: ""
-
-suspend fun getDataFromServer(url: String = "https://arasfjoiadjf.p-e.kr/cga/users"): String {
+suspend fun getDataFromServer(url: String): String {
     return withTimeoutOrNull(10000) {
         try {
             val connection = withContext(Dispatchers.IO) {

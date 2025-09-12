@@ -68,7 +68,6 @@ class CatgirlRoutes {
             EntityAura,
             BlockAura,
             LeapUtils,
-            CgaUsers,
             NeuRepo,
             SkyblockPlayer,
             WorldRenderUtils,

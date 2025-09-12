@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(EntityPlayerSP.class)
-public abstract class MovementUpdateEvent extends MixinAbstractClientPlayer { // why is it not in MixinEntityPlayerSP?
+public abstract class MovementUpdateEvent { // why is it not in MixinEntityPlayerSP?
 
     @Inject(method = "onUpdateWalkingPlayer", at = @At("HEAD"))
     private void onUpdateWalkingPlayerPre(CallbackInfo ci) {
