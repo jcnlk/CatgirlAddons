@@ -202,6 +202,7 @@ val autoP3Commands = Commodore("p3") {
             var distance: Double? = null
 
             var stringHolder: String? = null
+            var clientOnly: Boolean = false
 
             val ringArgs = mutableListOf<RingArgument>().apply { // todo recode
                 args.forEach { arg ->
@@ -222,6 +223,8 @@ val autoP3Commands = Commodore("p3") {
                             "centre", "center" -> add(CentreArgument)
                             "ground", "onground" -> add(GroundArgument)
                             "look", "rotate" -> add(LookArgument)
+
+                            "client", "clientonly" -> clientOnly = true
 
                             "exact" -> {
                                 x = mc.renderManager.viewerPosX
@@ -247,7 +250,7 @@ val autoP3Commands = Commodore("p3") {
                 "hclip"     -> HClipRing
                 "jump"      -> JumpRing
                 "swap"      -> SwapRing(stringHolder ?: return@runs invalidUsageString("swap"))
-                "command", "cmd" -> CommandRing(stringHolder ?: return@runs invalidUsageString("command", "cmd"))
+                "command", "cmd" -> CommandRing(stringHolder ?: return@runs invalidUsageString("command", "cmd"), clientOnly)
                 "lavaclip", "lc", "clip", "vclip" -> LavaClipRing(distance ?: 0.0)
                 "look", "rotate" -> LookRing
                 "motion", "velo" -> MotionRing

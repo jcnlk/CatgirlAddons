@@ -29,7 +29,6 @@ import java.awt.Color
 import java.awt.Color.black
 import java.util.Locale
 
-
 object AutoP3 : Module( // todo make it on tick; fix schizophrenia; add more args
     "Auto P3",
     Category.DUNGEON,
