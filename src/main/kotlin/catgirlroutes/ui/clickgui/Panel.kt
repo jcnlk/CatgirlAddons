@@ -100,17 +100,21 @@ class Panel(
                 contentHeight += h
             }
 
-            Gui.drawRect(0, height, width, height + contentHeight + 5, ColorUtil.dropDownColor)
+            val visibleContentHeight = (contentHeight - scrollOffset).coerceAtLeast(0)
+
+            Gui.drawRect(0, height, width, height + visibleContentHeight, ColorUtil.dropDownColor)
             if (ClickGui.design.isSelected("New")) {
-                Gui.drawRect(0, height, 2, height + contentHeight + 5, ColorUtil.outlineColor.rgb)
+                Gui.drawRect(0, height, 2, height + visibleContentHeight, ColorUtil.outlineColor.rgb)
             }
 
-            startY -= scrollOffset
+            startY = height - scrollOffset
             visibleButtons.forEach { moduleButton ->
                 moduleButton.y = startY
-                startY += moduleButton.drawScreen(mouseX, mouseY, partialTicks)
+                val buttonDrawnHeight = moduleButton.drawScreen(mouseX, mouseY, partialTicks)
+                startY += buttonDrawnHeight
             }
-            length = startY + 5
+
+            length = height + visibleContentHeight
         }
 
         // Resetting the scissor
@@ -118,12 +122,10 @@ class Panel(
 
         // Render the Panel
         Gui.drawRect(0, 0, width, height, ColorUtil.dropDownColor)
-        Gui.drawRect(0, startY, width, startY + 5, ColorUtil.dropDownColor)
 
         // Render decor
         if (ClickGui.design.isSelected("New")) {
             Gui.drawRect(0, 0, 2, height, ColorUtil.outlineColor.rgb)
-            Gui.drawRect(0, startY, 2, startY + 5, ColorUtil.outlineColor.rgb)
             FontUtil.drawStringWithShadow(title, 4.0, height / 2.0 - FontUtil.fontHeight / 2.0)
         } else if (ClickGui.design.isSelected("JellyLike")) {
             Gui.drawRect(4, 2, 5, height - 2, ColorUtil.jellyPanelColor)
@@ -212,13 +214,24 @@ class Panel(
      */
     fun scroll(amount: Int, mouseX: Int, mouseY: Int): Boolean {
         if (!visible) return false
-        if (isMouseOverExtended(mouseX, mouseY)) {
-            val diff = (-amount * SCROLL_DISTANCE).coerceAtMost(length - height - 16)
+        if (isMouseOverExtended(mouseX, mouseY) && extended) {
+            val scrollAmount = -amount * SCROLL_DISTANCE
 
-            val realDiff = (scrollOffset + diff).coerceAtLeast(0) - scrollOffset
-
-            length -= realDiff
-            scrollOffset += realDiff
+            var totalContentHeight = 0
+            val visibleButtons = getVisibleModuleButtons()
+            visibleButtons.forEach { mb ->
+                var buttonHeight = mb.height + 1
+                if (mb.extended && mb.menuElements.isNotEmpty()) {
+                    mb.menuElements.forEach { el ->
+                        buttonHeight += el.height
+                    }
+                }
+                totalContentHeight += buttonHeight
+            }
+            
+            val maxScroll = totalContentHeight
+            val newScrollOffset = (scrollOffset + scrollAmount).coerceIn(0, maxScroll)
+            scrollOffset = newScrollOffset
             return true
         }
         return false
