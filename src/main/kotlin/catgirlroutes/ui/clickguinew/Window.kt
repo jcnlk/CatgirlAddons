@@ -35,7 +35,7 @@ class Window(
     init {
         ModuleManager.modules
             .filter { (this.category == Category.SETTINGS && it::class.hasAnnotation<SettingsCategory>()) || it.category == this.category }
-            .sortedByDescending { catgirlroutes.ui.clickgui.util.FontUtil.getStringWidth(it.name) }
+            .sortedBy { catgirlroutes.ui.clickgui.util.FontUtil.getStringWidth(it.name) }
             .forEach { this.moduleButtons.add(ModuleButton(it, this)) }
     }
 
