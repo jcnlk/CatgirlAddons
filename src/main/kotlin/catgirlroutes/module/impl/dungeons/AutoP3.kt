@@ -2,6 +2,7 @@ package catgirlroutes.module.impl.dungeons
 
 import catgirlroutes.CatgirlRoutes.Companion.mc
 import catgirlroutes.CatgirlRoutes.Companion.scope
+import catgirlroutes.events.impl.ChatPacket
 import catgirlroutes.events.impl.TermOpenEvent
 import catgirlroutes.module.Category
 import catgirlroutes.module.Module
@@ -11,6 +12,7 @@ import catgirlroutes.utils.*
 import catgirlroutes.utils.ChatUtils.modMessage
 import catgirlroutes.utils.ClientListener.scheduleTask
 import catgirlroutes.utils.autop3.Ring
+import catgirlroutes.utils.autop3.RingsManager.loadRoute
 import catgirlroutes.utils.autop3.RingsManager.currentRoute
 import catgirlroutes.utils.autop3.RingsManager.ringEditMode
 import catgirlroutes.utils.dungeon.DungeonUtils.floorNumber
@@ -36,6 +38,7 @@ object AutoP3 : Module( // todo make it on tick; fix schizophrenia; add more arg
     tag = TagType.WHIP
 ) {
     var selectedRoute by StringSetting("Selected route", "1", 0, "Route name(-s)", "Name of the selected route for Auto P3.")
+    private val autoLoadOnBoss by BooleanSetting("Load On Boss", true)
     val inBossOnly by BooleanSetting("Boss only", true, "Active in boss room only.")
     private val editTitle by BooleanSetting("EditMode title", "Renders a title when edit mode is enabled.")
     private val chatFeedback by BooleanSetting("Chat feedback", true, "Sends chat messages when the ring is activated.")
@@ -108,5 +111,11 @@ object AutoP3 : Module( // todo make it on tick; fix schizophrenia; add more arg
         scheduleTask(2) {
             termFound = false
         }
+    }
+
+    @SubscribeEvent
+    fun onChat(event: ChatPacket) {
+        if (!autoLoadOnBoss || event.message != "[BOSS] Maxor: WELL! WELL! WELL! LOOK WHO'S HERE!" || (inBossOnly && floorNumber != 7)) return
+        RingsManager.loadRoute()
     }
 }
