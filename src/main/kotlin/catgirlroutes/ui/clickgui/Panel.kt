@@ -53,6 +53,7 @@ class Panel(
         moduleButtons.clear()
         ModuleManager.modules
             .filter { (this.category == Category.SETTINGS && it::class.hasAnnotation<SettingsCategory>()) || it.category == this.category }
+            .sortedByDescending { FontUtil.getStringWidth(it.name) }
             .forEach { this.moduleButtons.add(ModuleButton(it, this)) }
     }
     
