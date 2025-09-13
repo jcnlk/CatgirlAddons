@@ -116,6 +116,6 @@ object AutoP3 : Module( // todo make it on tick; fix schizophrenia; add more arg
     @SubscribeEvent
     fun onChat(event: ChatPacket) {
         if (!autoLoadOnBoss || event.message != "[BOSS] Maxor: WELL! WELL! WELL! LOOK WHO'S HERE!" || (inBossOnly && floorNumber != 7)) return
-        RingsManager.loadRoute()
+        loadRoute()
     }
 }
