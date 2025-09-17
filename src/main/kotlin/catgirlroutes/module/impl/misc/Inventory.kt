@@ -135,7 +135,7 @@ object Inventory : Module(
 
         val slotId = if (overlay == SearchType.AUCTION) 48 else 45
         val gui = event.gui as GuiChest
-        val signStack = openSlots[slotId]?.stack ?: return
+        val signStack = openSlots.getOrNull(slotId)?.stack ?: return
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_F)) {
             if (signStack.item == Items.sign && signStack.displayName == "§aSearch") {
