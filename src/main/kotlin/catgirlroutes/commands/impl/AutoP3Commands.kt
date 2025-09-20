@@ -44,6 +44,7 @@ val autoP3Commands = Commodore("p3") {
               §7/p3 clearroute §8: §rclears current route
               §7/p3 clear §8: §rclears ALL routes
               §7/p3 load §7[§broute§7]§r §8: §rloads selected route/routes
+              §7/p3 list §8: §rshows saved routes
               §7/p3 save §8: §rsaves current route
               §7/p3 help §8: §rshows this message
         """.trimIndent())
@@ -143,7 +144,12 @@ val autoP3Commands = Commodore("p3") {
     }
 
     literal("list").runs {
-        modMessage(allRoutes.joinToString("\n") { "${it.name} (${it.rings.size} rings)" })
+        if (allRoutes.isEmpty()) {
+            return@runs modMessage("§cNo AutoP3 routes saved.")
+        }
+        allRoutes.forEach { route ->
+            modMessage("AutoP3 routes list§7:\n§7- §r${route.name} §8(${route.rings.size} rings)")
+        }
     }
 
     literal("load").runs { routes: GreedyString? ->
